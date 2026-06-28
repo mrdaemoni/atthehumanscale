@@ -1,0 +1,94 @@
+---
+import Base from "../../layouts/Base.astro";
+import ScaleTitleCanvas from "../../components/ScaleTitleCanvas.astro";
+import { essays, site } from "../../data/site";
+---
+
+<Base title={site.titleEs} description={site.descriptionEs} lang="es" bodyClass="home es-home">
+  <main>
+    <section class="hero home-hero" aria-labelledby="hero-title">
+      <div class="hero-image" aria-hidden="true"></div>
+      <ScaleTitleCanvas title="La escala humana" lang="es" className="home-title-canvas wave-title-canvas" />
+      <div class="hero-copy">
+        <h1 id="hero-title" class="sr-only">La escala humana</h1>
+        <div class="entry-cta" aria-label="Empezar a leer o escuchar">
+          <a href="#ensayos">Empezar a leer</a>
+          <a href="/#essays">Read in English</a>
+          <button type="button" data-player-toggle aria-label="Empezar a escuchar"><span></span></button>
+        </div>
+        <p class="hero-dek">
+          A escala humana es el puente entre tecnología y humanidad. En
+          tecnología, escala significa crecimiento. En la vida humana, escala
+          significa proporción. Una herramienta a la escala equivocada hace más
+          pequeña a la persona. Una herramienta a escala humana la devuelve a sí
+          misma.
+        </p>
+      </div>
+    </section>
+
+    <section class="essays-preview book-index-section" id="ensayos" aria-labelledby="essay-index-title">
+      <div class="book-index-title-field">
+        <p class="eyebrow">Índice vivo</p>
+        <h2 id="essay-index-title" class="sr-only">Leer o escuchar el libro vivo</h2>
+        <ScaleTitleCanvas title="Leer o escuchar el libro vivo" lang="es" className="index-title-canvas wave-title-canvas" />
+      </div>
+      <section class="essay-playlist home-playlist" aria-label="Lista de ensayos">
+        {essays.map((essay, index) => (
+          <article class:list={["playlist-item", { active: index === 0 }]}>
+            <div class="playlist-actions" aria-label={`Acciones para ${essay.titleEs}`}>
+              <span class="playlist-number">{essay.number}</span>
+              <button class="playlist-play" type="button" data-player-toggle aria-label={`Escuchar ${essay.titleEs}`}><span></span></button>
+              <button
+                class="playlist-share"
+                type="button"
+                data-share-url={`${site.domains.en}/essays/${essay.slug}/`}
+                data-share-title={essay.titleEs}
+                aria-label={`Compartir ${essay.titleEs}`}
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="18" cy="5" r="2.4"></circle>
+                  <circle cx="6" cy="12" r="2.4"></circle>
+                  <circle cx="18" cy="19" r="2.4"></circle>
+                  <path d="M8.2 10.9 15.8 6.1M8.2 13.1l7.6 4.8"></path>
+                </svg>
+              </button>
+            </div>
+            <a class="playlist-copy" href={`/essays/${essay.slug}/`}>
+              <div class="playlist-heading">
+                <h2>{essay.titleEs}</h2>
+                <small>{essay.minutes} min</small>
+              </div>
+              <p>{essay.angleEs}</p>
+            </a>
+          </article>
+        ))}
+      </section>
+    </section>
+
+  </main>
+</Base>
+
+<script>
+  (() => {
+    const buttons = document.querySelectorAll("[data-share-url]");
+
+    buttons.forEach((button) => {
+      button.addEventListener("click", async () => {
+        const url = button.getAttribute("data-share-url") || window.location.href;
+        const title = button.getAttribute("data-share-title") || document.title;
+
+        try {
+          if (navigator.share) {
+            await navigator.share({ title, url });
+          } else {
+            await navigator.clipboard?.writeText(url);
+          }
+          button.setAttribute("data-shared", "true");
+          window.setTimeout(() => button.removeAttribute("data-shared"), 1200);
+        } catch (_error) {
+          button.removeAttribute("data-shared");
+        }
+      });
+    });
+  })();
+</script>

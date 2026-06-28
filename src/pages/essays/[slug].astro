@@ -1,0 +1,56 @@
+---
+import Base from "../../layouts/Base.astro";
+import ScaleTitleCanvas from "../../components/ScaleTitleCanvas.astro";
+import { essays } from "../../data/site";
+
+export function getStaticPaths() {
+  const modules = import.meta.glob("../../essays/*.md", { eager: true });
+  return Object.values(modules).map((mod: any) => ({
+    params: { slug: mod.frontmatter.slug },
+    props: { mod }
+  }));
+}
+
+const { mod } = Astro.props;
+const { Content } = mod;
+const frontmatter = mod.frontmatter;
+const essay = essays.find((item) => item.slug === frontmatter.slug);
+const related = essays.filter((item) => item.slug !== frontmatter.slug);
+---
+
+<Base
+  title={frontmatter.title}
+  description={frontmatter.description ?? frontmatter.dek}
+  image={`/og/${frontmatter.slug}.png`}
+  bodyClass="essay-body"
+>
+  <main class="essay-shell">
+    <article class="essay-article">
+      <header class="essay-header">
+        <ScaleTitleCanvas title={frontmatter.title} className="essay-title-canvas" />
+        <p class="eyebrow">{essay?.number ?? "Essay"} / {frontmatter.date}</p>
+        <h1 class="sr-only">{frontmatter.title}</h1>
+        <p class="dek">{frontmatter.dek}</p>
+        <p class="byline">{frontmatter.author}</p>
+      </header>
+      <div class="essay-content">
+        <Content />
+      </div>
+    </article>
+    <aside class="essay-aside" aria-label="Essay context">
+      <p class="kicker">This angle</p>
+      <p>{essay?.angle}</p>
+      {frontmatter.paperUrl && (
+        <a class="text-link" href={frontmatter.paperUrl}>{frontmatter.paperTitle}</a>
+      )}
+    </aside>
+    <nav class="next-essays" aria-label="More essays">
+      {related.map((item) => (
+        <a href={`/essays/${item.slug}/`}>
+          <span>{item.number}</span>
+          <strong>{item.title}</strong>
+        </a>
+      ))}
+    </nav>
+  </main>
+</Base>

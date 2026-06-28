@@ -1,0 +1,18 @@
+---
+const target = "/#essays";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="refresh" content={`0; url=${target}`} />
+    <link rel="canonical" href={target} />
+    <title>Essays | At human scale</title>
+  </head>
+  <body>
+    <p><a href={target}>Continue to the living index.</a></p>
+    <script is:inline>window.location.replace("/#essays");</script>
+  </body>
+</html>

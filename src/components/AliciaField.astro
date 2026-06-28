@@ -1,0 +1,406 @@
+<canvas class="alicia-field" id="alicia-field" aria-hidden="true"></canvas>
+
+<script is:inline>
+  (() => {
+    const canvas = document.getElementById("alicia-field");
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d", { alpha: true });
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const state = {
+      width: 0,
+      height: 0,
+      dpr: Math.min(window.devicePixelRatio || 1, 2),
+      pointerX: 0.5,
+      pointerY: 0.45,
+      scroll: 0,
+      progress: 0,
+      time: 0
+    };
+
+    const terms = [
+      "attention",
+      "relation",
+      "authorship",
+      "trust",
+      "surprise",
+      "care",
+      "tiempo",
+      "escala",
+      "Alicia"
+    ];
+
+    const codeRows = [
+      "async function construct(book, reader) {",
+      "  const weather = await book.listenAcrossTime()",
+      "  const margin = reader.attention + reader.distance",
+      "  while (page.isBeingRead()) {",
+      "    trace = relation.with({ care, surprise, authorship })",
+      "    horizon.follow(reader.hand, { softly: true })",
+      "    if (machineScale.flattens(trace)) trace.resist()",
+      "    yield page.draw(trace, weather, margin)",
+      "  }",
+      "}",
+      "compile: ocean / wind / room / trust"
+    ];
+
+    function resize() {
+      state.width = window.innerWidth;
+      state.height = window.innerHeight;
+      canvas.width = Math.floor(state.width * state.dpr);
+      canvas.height = Math.floor(state.height * state.dpr);
+      canvas.style.width = `${state.width}px`;
+      canvas.style.height = `${state.height}px`;
+      ctx.setTransform(state.dpr, 0, 0, state.dpr, 0, 0);
+    }
+
+    function traceY(seed, amp, offset, x) {
+      const { width, height, pointerX, pointerY, scroll, time } = state;
+      const baseY = height * offset + Math.sin(time * 0.00028 + seed) * 24;
+      const normalized = x / Math.max(width, 1);
+      const pull = Math.sin((normalized + pointerX) * Math.PI * 2 + seed);
+      const slow = Math.sin(normalized * Math.PI * 5 + scroll * 0.0012 + seed + time * 0.00038);
+      const leaf = Math.sin(normalized * Math.PI * 17 + time * 0.00021 + seed * 2) * Math.sin(time * 0.00013 + seed);
+      return (
+        baseY +
+        slow * amp +
+        leaf * amp * 0.28 +
+        pull * amp * 0.2 +
+        (pointerY - 0.5) * amp * 0.55
+      );
+    }
+
+    function drawTrace(seed, amp, offset, strokeColor, fillColor) {
+      const { width, time } = state;
+      const corridor = amp * 0.56 + 18;
+
+      ctx.save();
+      ctx.beginPath();
+      for (let x = -100; x <= width + 100; x += 14) {
+        const y = traceY(seed, amp, offset, x);
+        if (x === -100) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      for (let x = width + 100; x >= -100; x -= 14) {
+        const lower =
+          traceY(seed, amp, offset, x) +
+          corridor +
+          Math.sin(x * 0.009 + time * 0.00024 + seed) * amp * 0.18;
+        ctx.lineTo(x, lower);
+      }
+      ctx.closePath();
+      ctx.fillStyle = fillColor;
+      ctx.globalAlpha = 1;
+      ctx.fill();
+
+      ctx.beginPath();
+      for (let x = -80; x <= width + 80; x += 14) {
+        const y = traceY(seed, amp, offset, x);
+        if (x === -80) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = strokeColor;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      ctx.globalAlpha = 0.38;
+      ctx.beginPath();
+      for (let x = -80; x <= width + 80; x += 18) {
+        const y =
+          traceY(seed, amp, offset, x) +
+          corridor +
+          Math.sin(x * 0.009 + time * 0.00024 + seed) * amp * 0.18;
+        if (x === -80) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function topologyWave(layer, x) {
+      const { width, height, pointerX, pointerY, scroll, time, progress } = state;
+      const n = x / Math.max(width, 1);
+      const base = height * (0.1 + layer * 0.19 + progress * 0.045);
+      const slow =
+        Math.sin(n * Math.PI * (1.35 + layer * 0.2) + time * 0.00022 + layer * 1.7 + scroll * 0.00034) *
+        height *
+        0.032;
+      const small =
+        Math.sin(n * Math.PI * (4.8 + layer * 0.55) + time * 0.00031 + layer) *
+        height *
+        0.012;
+      return base + slow + small + (pointerY - 0.5) * height * 0.018 + (pointerX - 0.5) * layer * 5;
+    }
+
+    function drawTopologyBands() {
+      const { width, height, progress } = state;
+      const shades = [
+        "rgba(255, 248, 239, 0.16)",
+        "rgba(181, 66, 86, 0.13)",
+        "rgba(244, 196, 195, 0.1)",
+        "rgba(255, 248, 239, 0.12)",
+        "rgba(122, 160, 162, 0.055)",
+        "rgba(255, 248, 239, 0.18)"
+      ];
+
+      ctx.save();
+      ctx.globalCompositeOperation = "source-over";
+      for (let band = 0; band < shades.length; band += 1) {
+        ctx.beginPath();
+        if (band === 0) {
+          ctx.moveTo(-90, -90);
+          ctx.lineTo(width + 90, -90);
+          for (let x = width + 90; x >= -90; x -= 18) ctx.lineTo(x, topologyWave(0, x));
+        } else if (band === shades.length - 1) {
+          ctx.moveTo(-90, topologyWave(band - 1, -90));
+          for (let x = -90; x <= width + 90; x += 18) ctx.lineTo(x, topologyWave(band - 1, x));
+          ctx.lineTo(width + 90, height + 90);
+          ctx.lineTo(-90, height + 90);
+        } else {
+          ctx.moveTo(-90, topologyWave(band - 1, -90));
+          for (let x = -90; x <= width + 90; x += 18) ctx.lineTo(x, topologyWave(band - 1, x));
+          for (let x = width + 90; x >= -90; x -= 18) ctx.lineTo(x, topologyWave(band, x));
+        }
+        ctx.closePath();
+        ctx.fillStyle = shades[band];
+        ctx.globalAlpha = 0.74 - Math.min(0.22, progress * 0.18);
+        ctx.fill();
+      }
+
+      ctx.globalAlpha = 0.15;
+      ctx.strokeStyle = "rgba(65, 111, 123, 0.28)";
+      ctx.lineWidth = 1;
+      for (let layer = 0; layer < shades.length - 1; layer += 1) {
+        ctx.beginPath();
+        for (let x = -90; x <= width + 90; x += 16) {
+          const y = topologyWave(layer, x);
+          if (x === -90) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function drawVortex() {
+      const { width, height, pointerX, pointerY, time, progress } = state;
+      const cx = width * (0.18 + pointerX * 0.08);
+      const cy = height * (0.24 + pointerY * 0.08);
+      ctx.save();
+      ctx.globalAlpha = 0.22;
+      ctx.strokeStyle = "rgba(36, 79, 115, 0.32)";
+      ctx.lineWidth = 1;
+      for (let arm = 0; arm < 3; arm += 1) {
+        ctx.beginPath();
+        for (let i = 0; i < 210; i += 1) {
+          const t = i / 210;
+          const blip = Math.pow(Math.max(0, Math.sin(time * 0.0009 + arm * 2.1)), 22) * Math.sin(time * 0.006 + i);
+          const radius = 16 + t * Math.min(width, height) * (0.32 + progress * 0.08 + blip * 0.04);
+          const angle = t * Math.PI * 7 + time * 0.00042 + arm * Math.PI * 0.66 + blip * 0.45;
+          const x = cx + Math.cos(angle) * radius * (1.45 - t * 0.45);
+          const y = cy + Math.sin(angle) * radius * 0.62;
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function drawDepthDots() {
+      const { width, height, pointerX, pointerY, time, progress } = state;
+      const spacing = 34 + progress * 12;
+      ctx.save();
+      ctx.fillStyle = "rgba(32, 35, 31, 0.14)";
+      for (let y = -spacing; y < height + spacing; y += spacing) {
+        for (let x = -spacing; x < width + spacing; x += spacing) {
+          const altitude =
+            1 -
+            Math.min(
+              1,
+              Math.max(
+                0,
+                (y - topologyWave(0, x)) / Math.max(1, topologyWave(4, x) - topologyWave(0, x))
+              )
+            );
+          const far = Math.abs(x / Math.max(width, 1) - 0.5) * 1.15 + (y / Math.max(height, 1)) * 0.22;
+          const drift =
+            Math.sin(time * 0.00032 + x * 0.012 + progress * 4) * 4 +
+            Math.cos(time * 0.00028 + y * 0.014) * 3;
+          const radius = 0.34 + altitude * 0.92 + Math.max(0, 0.45 - far) * 0.35;
+          ctx.globalAlpha = 0.025 + altitude * 0.115 - Math.min(0.035, far * 0.03);
+          ctx.beginPath();
+          ctx.arc(x + drift, y - drift * 0.45, radius, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+
+    function hash(value, salt = 0) {
+      const raw = Math.sin(value * 127.1 + salt * 311.7) * 43758.5453123;
+      return raw - Math.floor(raw);
+    }
+
+    function drawWindDots() {
+      const { width, height, time, progress } = state;
+      const count = Math.min(320, Math.max(190, Math.floor((width * height) / 6500)));
+
+      ctx.save();
+      for (let i = 0; i < count; i += 1) {
+        const layer = Math.floor(hash(i, 1) * 5);
+        const lane = hash(i, 2);
+        const span = width + 180;
+        const speed = 0.018 + hash(i, 3) * 0.028 + (1 - layer / 5) * 0.008;
+        const x = (hash(i, 4) * span + time * speed + progress * 80) % span - 90;
+        const top = topologyWave(layer, x);
+        const bottom = layer >= 4 ? height + 70 : topologyWave(layer + 1, x);
+        const y =
+          top +
+          (bottom - top) * lane +
+          Math.sin(time * 0.0007 + i * 0.8) * (4 + layer * 1.2);
+        const altitude = 1 - layer / 5;
+        const edgeFade = Math.min(1, Math.max(0, (x + 90) / 140), Math.max(0, (width + 90 - x) / 140));
+        const radius = (0.34 + hash(i, 5) * 0.64 + altitude * 0.38) * (1 - layer * 0.045);
+        const alpha = (0.026 + altitude * 0.062 + hash(i, 6) * 0.02) * edgeFade;
+        const blue = hash(i, 7) > 0.84;
+
+        ctx.fillStyle = blue
+          ? `rgba(65, 111, 123, ${alpha * 0.92})`
+          : `rgba(38, 24, 23, ${alpha})`;
+        ctx.beginPath();
+        ctx.arc(x, y, Math.max(0.22, radius), 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    function drawTraceParticles() {
+      const { width, time, progress } = state;
+      const traces = [
+        { seed: 0.2, amp: 30, offset: 0.18, alpha: 0.038, hue: "38, 24, 23" },
+        { seed: 1.6, amp: 44, offset: 0.38, alpha: 0.065, hue: "38, 24, 23" },
+        { seed: 2.4, amp: 36, offset: 0.66, alpha: 0.075, hue: "65, 111, 123" },
+        { seed: 3.7, amp: 24, offset: 0.82, alpha: 0.058, hue: "38, 24, 23" }
+      ];
+
+      ctx.save();
+      traces.forEach((trace, layer) => {
+        const count = layer === 0 ? 18 : 28;
+        for (let i = 0; i < count; i += 1) {
+          const salt = layer * 100 + i;
+          const span = width + 180;
+          const speed = 0.024 + hash(salt, 3) * 0.026 + layer * 0.004;
+          const x = (hash(salt, 1) * span + time * speed + progress * 54) % span - 90;
+          const pulse = Math.pow(Math.max(0, Math.sin(time * 0.0024 + salt * 1.73)), 10);
+          const y =
+            traceY(trace.seed, trace.amp, trace.offset, x) +
+            Math.sin(time * 0.0009 + salt) * trace.amp * 0.62 +
+            (hash(salt, 2) - 0.5) * trace.amp * 0.72;
+          const radius = 0.55 + hash(salt, 4) * 0.88 + pulse * 0.92;
+          const edgeFade = Math.min(1, Math.max(0, (x + 90) / 120), Math.max(0, (width + 90 - x) / 120));
+          const alpha = (trace.alpha + pulse * 0.12) * edgeFade;
+
+          ctx.fillStyle = `rgba(${trace.hue}, ${alpha})`;
+          ctx.beginPath();
+          ctx.arc(x, y, radius, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      });
+      ctx.restore();
+    }
+
+    function drawCompilingCode() {
+      const { width, height, time, scroll, progress } = state;
+      ctx.save();
+      ctx.font = "11px ui-monospace, SFMono-Regular, Menlo, monospace";
+      ctx.textBaseline = "top";
+      ctx.globalAlpha = 0.14;
+      const columns = [0.52, 0.68, 0.81];
+      const startY = ((time * 0.004 + scroll * 0.016) % 320) - 150;
+      columns.forEach((factor, col) => {
+        const columnX = width * factor;
+        codeRows.forEach((row, index) => {
+          const y = startY + index * 21 + col * 185;
+          const typed = Math.floor((time * 0.011 + index * 5 + col * 11 + progress * 28) % (row.length + 46));
+          const line = row.slice(0, Math.min(row.length, typed));
+          ctx.fillStyle = index % 2 ? "rgba(141, 48, 38, 0.52)" : "rgba(32, 35, 31, 0.5)";
+          ctx.fillText(line, columnX + Math.sin(time * 0.0011 + index + col) * 8, y);
+          if (typed < row.length) ctx.fillText("_", columnX + line.length * 6.5 + 5, y);
+        });
+      });
+      ctx.restore();
+    }
+
+    function drawBreathingGraphs() {
+      const { width, height, time, progress } = state;
+      ctx.save();
+      ctx.globalAlpha = 0.2;
+      const baseX = width * 0.7;
+      const baseY = height * 0.68;
+      for (let i = 0; i < 13; i += 1) {
+        const scale = 1 + Math.sin(time * 0.0011 + i * 0.74 + progress * 8) * 0.24;
+        const w = Math.pow(1.19, i) * 15 * scale;
+        ctx.fillStyle = `rgba(141, 48, 38, ${0.08 + i * 0.012})`;
+        ctx.fillRect(baseX, baseY - i * 15, w, 8);
+      }
+      ctx.restore();
+    }
+
+    function draw() {
+      const { width, height, pointerX, pointerY, scroll, time, progress } = state;
+      ctx.clearRect(0, 0, width, height);
+
+      drawTopologyBands();
+      drawDepthDots();
+      drawWindDots();
+      drawVortex();
+
+      drawTrace(0.2, 30, 0.18, "rgba(121, 47, 35, 0.18)", "rgba(181, 66, 86, 0.038)");
+      drawTrace(1.6, 44, 0.38, "rgba(29, 91, 94, 0.16)", "rgba(122, 160, 162, 0.032)");
+      drawTrace(2.4, 36, 0.66, "rgba(92, 92, 43, 0.16)", "rgba(123, 139, 101, 0.026)");
+      drawTrace(3.7, 24, 0.82, "rgba(35, 46, 78, 0.12)", "rgba(255, 248, 239, 0.052)");
+      drawTraceParticles();
+      drawCompilingCode();
+      drawBreathingGraphs();
+
+      ctx.globalAlpha = 0.45;
+      ctx.fillStyle = "rgba(31, 34, 31, 0.46)";
+      ctx.font = "11px ui-monospace, SFMono-Regular, Menlo, monospace";
+      ctx.textBaseline = "top";
+      terms.forEach((term, index) => {
+        const x = width * (0.07 + ((index * 0.137 + pointerX * 0.03 + progress * 0.02) % 0.82));
+        const y =
+          height * (0.14 + ((index * 0.173 + scroll * 0.00007) % 0.74)) +
+          Math.sin(time * 0.00045 + index) * 12;
+        ctx.fillText(term, x, y);
+      });
+
+      if (!reduceMotion.matches) {
+        state.time += 16;
+        requestAnimationFrame(draw);
+      }
+    }
+
+    function updatePointer(event) {
+      state.pointerX = event.clientX / Math.max(window.innerWidth, 1);
+      state.pointerY = event.clientY / Math.max(window.innerHeight, 1);
+    }
+
+    function updateScroll() {
+      state.scroll = window.scrollY || 0;
+      const max = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+      state.progress = Math.min(1, Math.max(0, state.scroll / max));
+      document.documentElement.style.setProperty("--scroll-light", String(state.progress));
+      if (reduceMotion.matches) draw();
+    }
+
+    resize();
+    updateScroll();
+    window.addEventListener("resize", resize, { passive: true });
+    window.addEventListener("pointermove", updatePointer, { passive: true });
+    window.addEventListener("scroll", updateScroll, { passive: true });
+    reduceMotion.addEventListener?.("change", draw);
+    draw();
+  })();
+</script>

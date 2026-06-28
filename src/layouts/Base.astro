@@ -1,0 +1,48 @@
+---
+import "../styles/global.css";
+import AliciaField from "../components/AliciaField.astro";
+import AudioPlayer from "../components/AudioPlayer.astro";
+import FollowPanel from "../components/FollowPanel.astro";
+import ListeningStage from "../components/ListeningStage.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import { site } from "../data/site";
+
+const {
+  title = site.title,
+  description = site.description,
+  lang = "en",
+  image = "/og/the-weather-between-us.png",
+  bodyClass = ""
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, site.domains.en).toString();
+const fullTitle = title === site.title ? title : `${title} | ${site.title}`;
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="author" content={site.author} />
+    <meta name="theme-color" content="#f4dcdd" />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="en" href={site.domains.en + Astro.url.pathname.replace(/^\/es\/?/, "/")} />
+    <link rel="alternate" hreflang="es" href={site.domains.es + Astro.url.pathname.replace(/^\/es\/?/, "/")} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content={new URL(image, site.domains.en).toString()} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <title>{fullTitle}</title>
+  </head>
+  <body class={bodyClass}>
+    <AliciaField />
+    <SiteHeader lang={lang} />
+    <slot />
+    <ListeningStage lang={lang} />
+    <AudioPlayer lang={lang} />
+    <FollowPanel lang={lang} />
+  </body>
+</html>

@@ -1,0 +1,54 @@
+---
+const { lang = "en" } = Astro.props;
+const isEs = lang === "es";
+---
+
+<aside class="follow-panel" data-follow-panel aria-hidden="true">
+  <div class="follow-panel-scrim" data-follow-close></div>
+  <div class="follow-card" role="dialog" aria-modal="true" aria-labelledby="follow-title">
+    <button class="follow-close" type="button" data-follow-close aria-label={isEs ? "Cerrar" : "Close"}>x</button>
+    <p class="eyebrow">{isEs ? "Libro" : "Book"}</p>
+    <h2 id="follow-title">{isEs ? "El libro viene pronto." : "Book is coming soon."}</h2>
+    <p>
+      {isEs
+        ? "Escribe tu email para ser la primera persona en saber cuando esté listo para enviarse."
+        : "Enter your email to be the first to know when it is ready to ship."}
+    </p>
+    <form name={isEs ? "libro-lista" : "book-waitlist"} method="POST" data-netlify="true" action="/thanks/" class="follow-form">
+      <input type="hidden" name="form-name" value={isEs ? "libro-lista" : "book-waitlist"} />
+      <label>
+        <span>Email</span>
+        <input type="email" name="email" autocomplete="email" required placeholder={isEs ? "tu@email.com" : "you@example.com"} />
+      </label>
+      <button type="submit">{isEs ? "Avísame" : "Notify me"}</button>
+    </form>
+  </div>
+</aside>
+
+<script is:inline>
+  (() => {
+    const panel = document.querySelector("[data-follow-panel]");
+    if (!panel) return;
+
+    const openers = document.querySelectorAll("[data-follow-open]");
+    const closers = panel.querySelectorAll("[data-follow-close]");
+    const email = panel.querySelector("input[type='email']");
+
+    function openPanel() {
+      panel.dataset.open = "true";
+      panel.setAttribute("aria-hidden", "false");
+      window.setTimeout(() => email?.focus(), 80);
+    }
+
+    function closePanel() {
+      panel.dataset.open = "false";
+      panel.setAttribute("aria-hidden", "true");
+    }
+
+    openers.forEach((opener) => opener.addEventListener("click", openPanel));
+    closers.forEach((closer) => closer.addEventListener("click", closePanel));
+    window.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closePanel();
+    });
+  })();
+</script>

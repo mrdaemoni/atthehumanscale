@@ -1,0 +1,26 @@
+---
+import Base from "../layouts/Base.astro";
+import ScaleTitleCanvas from "../components/ScaleTitleCanvas.astro";
+---
+
+<Base title="The Book" description="The future PDF and print edition of At the Human Scale.">
+  <main class="page-shell book-page book-soon-room">
+    <section class="page-hero book-pdf-hero book-soon-hero">
+      <p class="eyebrow">The book</p>
+      <h1 class="sr-only">Book is coming soon.</h1>
+      <ScaleTitleCanvas title="Book is coming soon." className="book-title-canvas wave-title-canvas" />
+      <p>
+        Enter your email to be the first to know when it is ready to ship.
+      </p>
+      <form name="book-page-waitlist" method="POST" data-netlify="true" action="/thanks/" class="follow-form book-waitlist-form">
+        <input type="hidden" name="form-name" value="book-page-waitlist" />
+        <label>
+          <span>Email</span>
+          <input type="email" name="email" autocomplete="email" required placeholder="you@example.com" />
+        </label>
+        <button type="submit">Notify me</button>
+      </form>
+      <a class="button ghost" href="/#essays">Read the living edition</a>
+    </section>
+  </main>
+</Base>

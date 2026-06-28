@@ -1,0 +1,61 @@
+---
+import { essays } from "../data/site";
+
+const { lang = "en" } = Astro.props;
+const isEs = lang === "es";
+const activeSlug = "the-weather-between-us";
+const first = essays.find((essay) => essay.slug === activeSlug) ?? essays[0];
+---
+
+<aside class="listen-player" data-player aria-label={isEs ? "Reproductor del libro" : "Book audio player"}>
+  <button class="listen-toggle" type="button" aria-label={isEs ? "Reproducir audio" : "Play audio"} data-player-toggle>
+    <span></span>
+  </button>
+  <div class="listen-copy">
+    <p>{isEs ? "Leyendo ahora" : "Now reading"}</p>
+    <strong>{isEs ? first.titleEs : first.title}</strong>
+    <div class="listen-progress" aria-hidden="true" data-player-progress><span></span></div>
+  </div>
+  <div class="listen-time" aria-label={isEs ? "Tiempo de audio" : "Audio time"}>
+    <span data-player-time>0:00</span>
+    <span>8:57</span>
+  </div>
+  <div class="listen-modes" aria-label={isEs ? "Idioma" : "Language"}>
+    <a href="/#essays" aria-current={!isEs ? "true" : undefined}>EN</a>
+    <a href="/es/#ensayos" aria-current={isEs ? "true" : undefined}>ES</a>
+  </div>
+  <ol class="listen-queue" aria-label={isEs ? "Lista de escucha" : "Listening queue"}>
+    {essays.map((essay) => (
+      <li class={essay.slug === activeSlug ? "active" : ""}>
+        <a href={`/essays/${essay.slug}/`}>
+          <span>{essay.number}</span>
+          <em>{isEs ? essay.titleEs : essay.title}</em>
+        </a>
+      </li>
+    ))}
+  </ol>
+</aside>
+
+<script is:inline>
+  (() => {
+    const player = document.querySelector("[data-player]");
+    const toggles = document.querySelectorAll("[data-player-toggle]");
+    if (!player || !toggles.length) return;
+
+    toggles.forEach((toggle) => {
+      toggle.addEventListener("click", (event) => {
+        event.preventDefault();
+        if (window.HumanScaleListening?.toggle) {
+          window.HumanScaleListening.toggle();
+          return;
+        }
+
+        const isPlaying = player.dataset.playing === "true";
+        const next = !isPlaying;
+        player.dataset.playing = next ? "true" : "false";
+        document.documentElement.dataset.listening = next ? "true" : "false";
+        toggles.forEach((item) => item.setAttribute("aria-pressed", String(next)));
+      });
+    });
+  })();
+</script>

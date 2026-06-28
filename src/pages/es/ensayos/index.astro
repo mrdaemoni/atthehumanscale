@@ -1,0 +1,18 @@
+---
+const target = "/es/#ensayos";
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="refresh" content={`0; url=${target}`} />
+    <link rel="canonical" href={target} />
+    <title>Ensayos | La escala humana</title>
+  </head>
+  <body>
+    <p><a href={target}>Continuar al índice vivo.</a></p>
+    <script is:inline>window.location.replace("/es/#ensayos");</script>
+  </body>
+</html>

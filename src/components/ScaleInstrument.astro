@@ -1,0 +1,25 @@
+---
+const { lang = "en" } = Astro.props;
+const isEs = lang === "es";
+---
+
+<div class="scale-instrument" aria-label={isEs ? "Diagrama de escala humana y escala tecnica" : "Human scale and technical scale diagram"}>
+  <div class="depth-field">
+    <p>{isEs ? "escala humana" : "human scale"}</p>
+    <span>{isEs ? "profundidad" : "depth"}</span>
+    <span>{isEs ? "proporcion" : "proportion"}</span>
+    <span>{isEs ? "presencia" : "presence"}</span>
+  </div>
+  <pre class="growth-code"><code>{`const machineScale = (person) => {
+  while (market.wantsMore()) {
+    person = compress(person)
+    signal = multiply(person)
+    world += automate(signal)
+  }
+}
+
+const humanScale = (relation) => {
+  relation.depth += attention * time
+  return keepHandOnPen(relation)
+}`}</code></pre>
+</div>

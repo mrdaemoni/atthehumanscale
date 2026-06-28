@@ -1,0 +1,388 @@
+---
+const { title = "At the Human Scale", lang = "en", className = "" } = Astro.props;
+---
+
+<canvas class:list={["scale-title-canvas", className]} data-title={title} data-lang={lang} aria-hidden="true"></canvas>
+
+<script is:inline>
+  (() => {
+    const canvases = document.querySelectorAll(".scale-title-canvas");
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    canvases.forEach((canvas) => {
+      const ctx = canvas.getContext("2d", { alpha: true });
+      const source = document.createElement("canvas");
+      const sourceCtx = source.getContext("2d", { willReadFrequently: true });
+      const isEssayTitle = canvas.classList.contains("essay-title-canvas");
+      const isHomeTitle = canvas.classList.contains("home-title-canvas");
+      const isIndexTitle = canvas.classList.contains("index-title-canvas");
+      const isBookTitle = canvas.classList.contains("book-title-canvas");
+      const isWaveTitle = isEssayTitle || isHomeTitle || isIndexTitle || canvas.classList.contains("wave-title-canvas");
+      const state = {
+        width: 0,
+        height: 0,
+        dpr: Math.min(window.devicePixelRatio || 1, 2),
+        points: [],
+        time: 0,
+        pointerX: 0.5,
+        pointerY: 0.5,
+        lastPointerMove: 0
+      };
+
+      function linesForTitle() {
+        const raw = canvas.dataset.title || "At the Human Scale";
+        if (raw.includes(" / ")) return raw.split(" / ");
+        if (raw === "At the Human Scale") return state.width < 850 ? ["At the", "Human", "Scale"] : ["At the", "Human Scale"];
+        if (raw === "At human scale") return state.width < 850 ? ["At", "human", "scale"] : ["At human", "scale"];
+        if (raw === "La escala humana") return ["La escala", "humana"];
+        if (raw === "Book is coming soon.") return state.width < 900 ? ["Book is", "coming", "soon."] : ["Book is", "coming soon."];
+        if (raw === "Read or listen to the living book") {
+          return state.width < 720 ? ["Read", "or listen", "to the book"] : ["Read or listen", "to the living", "book"];
+        }
+        if (raw === "Leer o escuchar el libro vivo") {
+          return state.width < 720 ? ["Leer", "o escuchar", "el libro vivo"] : ["Leer o escuchar", "el libro", "vivo"];
+        }
+        return raw.split(" ");
+      }
+
+      function titleMetrics(lines = linesForTitle()) {
+        const base = isEssayTitle
+          ? Math.min(state.width / 5.7, state.height / 2.15)
+          : isHomeTitle
+            ? Math.min(state.width / 4.7, state.height / 1.7)
+            : isBookTitle
+              ? Math.min(state.width / 4.3, state.height / 1.9)
+              : isIndexTitle
+                ? Math.min(state.width / 6.8, state.height / 2.9)
+                : Math.min(state.width / 7.5, state.height / 2.8);
+        const fontSize = isEssayTitle
+          ? Math.max(76, Math.min(196, base))
+          : isHomeTitle
+            ? Math.max(96, Math.min(230, base))
+            : isBookTitle
+              ? Math.max(92, Math.min(220, base))
+              : isIndexTitle
+                ? Math.max(70, Math.min(164, base))
+                : Math.max(58, Math.min(156, base));
+        const leading = fontSize * (isWaveTitle ? 0.86 : 0.92);
+        const totalHeight = leading * (lines.length - 1);
+        const startY =
+          state.height *
+            (isEssayTitle ? 0.48 : isHomeTitle ? 0.42 : isBookTitle ? 0.46 : isIndexTitle ? 0.5 : 0.24) -
+          totalHeight / 2;
+        return { fontSize, leading, startY };
+      }
+
+      function resize() {
+        const rect = canvas.getBoundingClientRect();
+        state.width = Math.max(320, rect.width);
+        state.height = Math.max(280, rect.height);
+        canvas.width = Math.floor(state.width * state.dpr);
+        canvas.height = Math.floor(state.height * state.dpr);
+        source.width = canvas.width;
+        source.height = canvas.height;
+        ctx.setTransform(state.dpr, 0, 0, state.dpr, 0, 0);
+        sourceCtx.setTransform(state.dpr, 0, 0, state.dpr, 0, 0);
+        sampleTitle();
+      }
+
+      function sampleTitle() {
+        const lines = linesForTitle();
+        state.points = [];
+        sourceCtx.clearRect(0, 0, state.width, state.height);
+        sourceCtx.fillStyle = "#111";
+        sourceCtx.textBaseline = "middle";
+        sourceCtx.textAlign = "left";
+        const { fontSize, leading, startY } = titleMetrics(lines);
+        sourceCtx.font = `${fontSize}px Iowan Old Style, Palatino Linotype, Georgia, serif`;
+
+        lines.forEach((line, index) => {
+          const x = state.width * 0.03 + (index % 2) * state.width * 0.075;
+          sourceCtx.fillText(line, x, startY + index * leading);
+        });
+
+        const pixels = sourceCtx.getImageData(0, 0, canvas.width, canvas.height).data;
+        const step = isWaveTitle ? 4 : state.width < 520 ? 5 : 4;
+        for (let y = 0; y < state.height; y += step) {
+          for (let x = 0; x < state.width; x += step) {
+            const index = (Math.floor(y * state.dpr) * canvas.width + Math.floor(x * state.dpr)) * 4 + 3;
+            if (pixels[index] > 64) {
+              const depth = 0.6 + (x / state.width) * 1.8;
+              const centerX = state.width * 0.5;
+              const centerY = state.height * 0.42;
+              const dx = x - centerX;
+              const dy = y - centerY;
+              const radius = Math.hypot(dx, dy);
+              const angle = Math.atan2(dy, dx);
+              state.points.push({
+                x,
+                y,
+                ox: x,
+                oy: y,
+                depth,
+                radius,
+                angle,
+                seed: Math.sin(x * 12.9898 + y * 78.233) * 43758.5453
+              });
+            }
+          }
+        }
+      }
+
+      function drawPerspectiveField() {
+        const pulse = Math.sin(state.time * 0.006) * 0.015;
+        const horizon = state.height * (0.18 + state.pointerY * 0.08 + pulse);
+        const vanishing = state.width * (0.42 + (state.pointerX - 0.5) * 0.18 + Math.sin(state.time * 0.004) * 0.015);
+        ctx.globalAlpha = 0.24;
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = "rgba(32, 35, 31, 0.22)";
+
+        for (let i = 0; i < 24; i += 1) {
+          const x = (i / 23) * state.width;
+          ctx.beginPath();
+          ctx.moveTo(x, state.height);
+          ctx.lineTo(vanishing, horizon);
+          ctx.stroke();
+        }
+
+        for (let i = 0; i < 14; i += 1) {
+          const t = i / 13;
+          const y = horizon + Math.pow(t, 1.8) * (state.height - horizon);
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.quadraticCurveTo(state.width * 0.5, y + Math.sin(state.time * 0.012 + i) * 8, state.width, y);
+          ctx.stroke();
+        }
+      }
+
+      function drawMachineScale() {
+        ctx.save();
+        ctx.translate(state.width * 0.74, state.height * 0.13);
+        ctx.globalAlpha = 0.34;
+        ctx.font = "11px ui-monospace, SFMono-Regular, Menlo, monospace";
+        ctx.fillStyle = "rgba(32, 35, 31, 0.58)";
+        const rows = [
+          "const book = await relation.read({ slow: true })",
+          "for (const fragment of book.weather) {",
+          "  signal = fragment.with(time).without(flattening)",
+          "  if (signal.touches(humanScale)) keep(signal)",
+          "  else let it pass like wind",
+          "}",
+          "compile({ attention, distance, care })"
+        ];
+        rows.forEach((row, i) => {
+          const typed = Math.max(0, Math.min(row.length, Math.floor((state.time * 0.16 + i * 7) % (row.length + 42))));
+          ctx.fillText(row.slice(0, typed), Math.sin(state.time * 0.004 + i) * 2, i * 18);
+          if (typed < row.length) ctx.fillText("_", typed * 6.5 + 3, i * 18);
+        });
+        for (let i = 0; i < 11; i += 1) {
+          const pulse = 1 + Math.sin(state.time * 0.014 + i * 0.77) * 0.16;
+          const width = Math.pow(1.25, i) * 16 * pulse;
+          ctx.fillStyle = `rgba(141, 48, 38, ${0.055 + i * 0.014})`;
+          ctx.fillRect(2 + Math.sin(state.time * 0.008 + i) * 3, 140 + i * 15, width, 8);
+        }
+        ctx.restore();
+      }
+
+      function drawHumanScale() {
+        ctx.save();
+        ctx.translate(state.width * 0.015, state.height * 0.045);
+        ctx.globalAlpha = isWaveTitle ? 0.18 : 0.24;
+        ctx.strokeStyle = "rgba(36, 79, 115, 0.32)";
+        ctx.fillStyle = "rgba(36, 79, 115, 0.46)";
+        ctx.font = "11px ui-monospace, SFMono-Regular, Menlo, monospace";
+        ctx.fillText("depth = distance + attention + time", 0, 0);
+        const field = Math.min(state.width, state.height);
+        for (let arm = 0; arm < 4; arm += 1) {
+          ctx.beginPath();
+          for (let i = 0; i < 260; i += 1) {
+            const t = i / 259;
+            const weather =
+              Math.sin(t * Math.PI * 9 + state.time * 0.004 + arm) * 9 +
+              Math.sin(t * Math.PI * 17 + state.time * 0.0017 + arm * 2) * 5;
+            const radius = 20 + t * field * (isWaveTitle ? 0.5 : 0.56);
+            const angle = t * Math.PI * 6.3 + state.time * 0.0012 + arm * 0.74 + Math.sin(t * 8 + arm) * 0.26;
+            const x = 95 + Math.cos(angle) * (radius + weather) * (1.34 - t * 0.18);
+            const y = 120 + Math.sin(angle) * (radius + weather * 0.7) * (0.52 + t * 0.08);
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          }
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+
+      function drawTitleSkeleton() {
+        const lines = linesForTitle();
+        const { fontSize, leading, startY } = titleMetrics(lines);
+
+        ctx.save();
+        ctx.globalAlpha = 1;
+        ctx.textBaseline = "middle";
+        ctx.textAlign = "left";
+        ctx.font = `${fontSize}px Iowan Old Style, Palatino Linotype, Georgia, serif`;
+        lines.forEach((line, index) => {
+          const x = state.width * 0.03 + (index % 2) * state.width * 0.075;
+          const y = startY + index * leading;
+          ctx.lineWidth = isWaveTitle ? 1 : 0.9;
+          ctx.strokeStyle = `rgba(32, 35, 31, ${isIndexTitle ? 0.27 : isWaveTitle ? 0.2 : 0.16})`;
+          ctx.strokeText(line, x, y);
+          ctx.fillStyle = `rgba(32, 35, 31, ${isIndexTitle ? 0.028 : isWaveTitle ? 0.018 : 0.012})`;
+          ctx.fillText(line, x, y);
+          ctx.strokeStyle = `rgba(36, 79, 115, ${isWaveTitle ? 0.05 : 0.038})`;
+          ctx.strokeText(line, x - 1, y + 1);
+        });
+
+        ctx.globalAlpha = isWaveTitle ? 0.44 : 0.34;
+        ctx.lineWidth = 0.7;
+        ctx.strokeStyle = "rgba(32, 35, 31, 0.2)";
+        const stride = isWaveTitle ? 5 : 7;
+        for (let i = 0; i < state.points.length - 2; i += stride) {
+          const point = state.points[i];
+          const next = state.points[i + 1];
+          if (Math.hypot(next.ox - point.ox, next.oy - point.oy) < 18) {
+            ctx.beginPath();
+            ctx.moveTo(point.ox, point.oy);
+            ctx.lineTo(next.ox, next.oy);
+            ctx.stroke();
+          }
+        }
+        ctx.restore();
+      }
+
+      function titleWaveTopY(x) {
+        const n = x / Math.max(state.width, 1);
+        return (
+          state.height * (isHomeTitle ? 0.025 : isBookTitle ? 0.08 : isWaveTitle ? 0.2 : 0.18) +
+          Math.sin(n * Math.PI * 2.4 + state.time * 0.016) * 24 +
+          Math.sin(n * Math.PI * 6.2 + state.time * 0.009) * 11
+        );
+      }
+
+      function titleWaveBottomY(x) {
+        const n = x / Math.max(state.width, 1);
+        return (
+          state.height * (isHomeTitle ? 0.92 : isBookTitle ? 0.9 : isWaveTitle ? 0.82 : 0.74) +
+          Math.sin(n * Math.PI * 2.1 + state.time * 0.013 + 1.4) * 28 +
+          Math.sin(n * Math.PI * 5.5 + state.time * 0.007 + 0.6) * 10
+        );
+      }
+
+      function clipTitleWaves() {
+        ctx.beginPath();
+        ctx.moveTo(0, titleWaveTopY(0));
+        for (let x = 0; x <= state.width; x += 18) {
+          ctx.lineTo(x, titleWaveTopY(x));
+        }
+        for (let x = state.width; x >= 0; x -= 18) {
+          ctx.lineTo(x, titleWaveBottomY(x));
+        }
+        ctx.closePath();
+        ctx.clip();
+      }
+
+      function drawTitleWaves() {
+        ctx.save();
+        ctx.globalAlpha = isWaveTitle ? 0.18 : 0.14;
+        ctx.strokeStyle = "rgba(65, 111, 123, 0.34)";
+        ctx.lineWidth = 1;
+        [titleWaveTopY, titleWaveBottomY].forEach((wave) => {
+          ctx.beginPath();
+          for (let x = 0; x <= state.width; x += 14) {
+            const y = wave(x);
+            if (x === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          }
+          ctx.stroke();
+        });
+        if (!isEssayTitle) {
+          ctx.globalAlpha = 0.06;
+          ctx.fillStyle = "rgba(170, 49, 87, 0.36)";
+          ctx.beginPath();
+          ctx.moveTo(0, titleWaveBottomY(0));
+          for (let x = 0; x <= state.width; x += 18) ctx.lineTo(x, titleWaveBottomY(x));
+          ctx.lineTo(state.width, state.height);
+          ctx.lineTo(0, state.height);
+          ctx.closePath();
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, state.width, state.height);
+        drawHumanScale();
+        drawMachineScale();
+        ctx.save();
+        clipTitleWaves();
+        drawTitleSkeleton();
+
+        ctx.globalCompositeOperation = "source-over";
+        ctx.globalAlpha = 1;
+        state.points.forEach((point, index) => {
+          const gustSeed = Math.sin(Math.floor(state.time / 170) * 12.9898 + point.seed) * 43758.5453;
+          const seedUnit = point.seed - Math.floor(point.seed);
+          const gustWindow = Math.pow(Math.max(0, Math.sin(state.time * 0.008 + point.seed * 0.0001)), 22);
+          const gust = (gustSeed - Math.floor(gustSeed) - 0.5) * gustWindow * 26;
+          const stream = (seedUnit + state.time * (0.0027 + seedUnit * 0.00065)) % 1;
+          const windX = -state.width * 0.12 + stream * state.width * 1.24;
+          const windY =
+            point.oy +
+            Math.sin(state.time * 0.004 + point.seed + point.ox * 0.006) * 14 +
+            Math.cos(state.time * 0.0026 + point.seed) * 9 +
+            gust;
+          const catchDistance = isWaveTitle ? 34 : 42;
+          const catchStrength =
+            Math.exp(-Math.pow((windX - point.ox) / catchDistance, 2)) *
+            (0.5 + Math.sin(state.time * 0.006 + point.seed) * 0.18);
+          const collision = Math.min(1, Math.max(0, catchStrength * 2.35));
+          const meshTremor = Math.sin(state.time * 0.005 + point.seed) * 2.5;
+          const rebound = Math.sin(collision * Math.PI) * Math.sign(windX - point.ox) * (isWaveTitle ? 10 : 7);
+          const x = windX * (1 - catchStrength) + (point.ox + meshTremor - rebound) * catchStrength;
+          const y = windY * (1 - catchStrength) + (point.oy + meshTremor * 0.4) * catchStrength;
+          const alpha =
+            (isWaveTitle ? 0.024 : 0.02) +
+            collision * (isWaveTitle ? 0.38 : 0.32) +
+            gustWindow * 0.05;
+          ctx.fillStyle = `rgba(32, 35, 31, ${alpha})`;
+          ctx.beginPath();
+          ctx.arc(x, y, (point.depth > 1.7 ? 1.28 : 0.95) + collision * 0.9, 0, Math.PI * 2);
+          ctx.fill();
+          if (collision > 0.24) {
+            ctx.fillStyle = `rgba(32, 35, 31, ${0.035 + collision * (isWaveTitle ? 0.24 : 0.18)})`;
+            ctx.beginPath();
+            ctx.arc(point.ox, point.oy, 0.8 + collision * 1.2, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          if (index % 17 === 0 && collision > 0.32) {
+            ctx.strokeStyle = `rgba(141, 48, 38, ${0.02 + collision * 0.08})`;
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(point.ox + Math.sin(point.seed) * 8, point.oy + Math.cos(point.seed) * 6);
+            ctx.stroke();
+          }
+        });
+        ctx.restore();
+        drawTitleWaves();
+
+        if (!reduceMotion.matches) {
+          state.time += 0.44;
+          requestAnimationFrame(draw);
+        }
+      }
+
+      function pointer(event) {
+        const rect = canvas.getBoundingClientRect();
+        state.pointerX = (event.clientX - rect.left) / Math.max(rect.width, 1);
+        state.pointerY = (event.clientY - rect.top) / Math.max(rect.height, 1);
+        state.lastPointerMove = performance.now();
+      }
+
+      resize();
+      draw();
+      window.addEventListener("resize", resize, { passive: true });
+      window.addEventListener("pointermove", pointer, { passive: true });
+      reduceMotion.addEventListener?.("change", draw);
+    });
+  })();
+</script>
