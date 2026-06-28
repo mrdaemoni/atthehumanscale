@@ -418,11 +418,38 @@ const firstDurationLabel = `${Math.floor(firstDuration / 60)}:${Math.round(first
       toggles.forEach((toggle) => toggle.setAttribute("aria-pressed", String(isPlaying)));
     }
 
+    function fallbackTranscript() {
+      const cues = cueSets[activeEpisode.slug] || weatherCues;
+      const duration = activeEpisode.duration || 538;
+      return {
+        title: activeEpisode.title,
+        estimatedDuration: duration,
+        actualDuration: duration,
+        segments: cues.map((cue, index) => ({
+          index,
+          start: Math.max(0, cue.start),
+          end: Math.min(duration, cue.end),
+          text: cue.text,
+          theme: cue.theme
+        }))
+      };
+    }
+
     async function loadTranscript() {
       if (transcript) return transcript;
-      const response = await fetch("/audio/the-weather-between-us.transcript.json");
-      transcript = await response.json();
-      if (durationEl) durationEl.textContent = formatTime(transcript.actualDuration || transcript.estimatedDuration);
+      if (!activeEpisode.transcriptSrc) {
+        transcript = fallbackTranscript();
+      } else {
+        try {
+          const response = await fetch(activeEpisode.transcriptSrc);
+          transcript = response.ok ? await response.json() : fallbackTranscript();
+        } catch (_error) {
+          transcript = fallbackTranscript();
+        }
+      }
+      const duration = transcript.actualDuration || transcript.estimatedDuration || activeEpisode.duration;
+      if (durationEl) durationEl.textContent = formatTime(duration);
+      if (playerDurationEl) playerDurationEl.textContent = formatTime(activeEpisode.duration || duration);
       return transcript;
     }
 
@@ -485,7 +512,8 @@ const firstDurationLabel = `${Math.floor(firstDuration / 60)}:${Math.round(first
           ? (audioTime + canvasTime * 0.016) % visualDuration
           : audioTime;
       const segment = segmentAt(time).segment;
-      const scheduledCues = poeticCues.filter((cue) => {
+      const activeCueSet = cueSets[activeEpisode.slug] || weatherCues;
+      const scheduledCues = activeCueSet.filter((cue) => {
         const lead = Math.max(cue.lead ?? 16, 12);
         const tail = Math.max(cue.tail ?? 24, 20);
         return time >= cue.start - lead && time <= cue.end + tail;
@@ -510,12 +538,48 @@ const firstDurationLabel = `${Math.floor(firstDuration / 60)}:${Math.round(first
       raf = window.requestAnimationFrame(drawCanvas);
     }
 
-    async function open() {
+    function selectEpisode(episode = {}) {
+      const next = {
+        slug: episode.slug || activeEpisode.slug,
+        title: episode.title || activeEpisode.title,
+        audioSrc: episode.audioSrc || activeEpisode.audioSrc,
+        transcriptSrc: episode.transcriptSrc || "",
+        duration: Number(episode.duration || activeEpisode.duration || 0)
+      };
+      if (!next.audioSrc) return;
+
+      const changed = next.slug !== activeEpisode.slug || next.audioSrc !== activeEpisode.audioSrc;
+      activeEpisode = next;
+      stage.dataset.theme = "field";
+
+      if (titleEl) titleEl.textContent = next.title;
+      if (durationEl) durationEl.textContent = formatTime(next.duration);
+      if (playerTitleEl) playerTitleEl.textContent = next.title;
+      if (playerDurationEl) playerDurationEl.textContent = formatTime(next.duration);
+      playerQueueItems.forEach((item) => {
+        item.classList.toggle("active", item.dataset.playerQueueItem === next.slug);
+      });
+
+      if (!changed) return;
+      transcript = null;
+      activeIndex = -1;
+      audio.pause();
+      audio.src = next.audioSrc;
+      audio.currentTime = 0;
+      audio.load();
+      if (timeEl) timeEl.textContent = "0:00";
+      if (playerTimeEl) playerTimeEl.textContent = "0:00";
+      if (progressEl) progressEl.style.transform = "scaleX(0)";
+      if (playerProgressEl) playerProgressEl.style.transform = "scaleX(0)";
+    }
+
+    async function open(episode) {
+      selectEpisode(episode);
       stage.dataset.open = "true";
       stage.setAttribute("aria-hidden", "false");
       syncChrome(true);
+      await loadTranscript();
       const playPromise = audio.play();
-      loadTranscript().then(updateText);
       try {
         await playPromise;
         stage.dataset.playError = "";
@@ -534,8 +598,9 @@ const firstDurationLabel = `${Math.floor(firstDuration / 60)}:${Math.round(first
       updateText();
     }
 
-    function toggle() {
-      if (audio.paused) open();
+    function toggle(episode) {
+      const nextSlug = episode?.slug || activeEpisode.slug;
+      if (audio.paused || nextSlug !== activeEpisode.slug) open(episode);
       else pause();
     }
 
@@ -557,6 +622,6 @@ const firstDurationLabel = `${Math.floor(firstDuration / 60)}:${Math.round(first
     resizeCanvas();
     loadTranscript().then(updateText);
 
-    window.HumanScaleListening = { open, pause, toggle, close };
+    window.HumanScaleListening = { open, pause, toggle, close, select: selectEpisode };
   })();
 </script>
