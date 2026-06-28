@@ -14,7 +14,17 @@ import { essays, site } from "../data/site";
         <div class="entry-cta" aria-label="Start reading or listening">
           <a href="#start-here">Start here</a>
           <a href="/es/#ensayos">Leer en español</a>
-          <button type="button" data-player-toggle aria-label="Start listening"><span></span></button>
+          <button
+            type="button"
+            data-player-toggle
+            data-listen-slug={essays[0].slug}
+            data-listen-title={essays[0].title}
+            data-listen-audio={essays[0].audioSrc}
+            data-listen-duration={essays[0].audioDuration}
+            aria-label="Start listening"
+          >
+            <span></span>
+          </button>
         </div>
         <p class="hero-dek">
           A bilingual living book about AI, making, and remembering who we are.
@@ -104,7 +114,20 @@ import { essays, site } from "../data/site";
           <article class:list={["playlist-item", { active: index === 0 }]}>
             <div class="playlist-actions" aria-label={`Actions for ${essay.title}`}>
               <span class="playlist-number">{essay.number}</span>
-              <button class="playlist-play" type="button" data-player-toggle aria-label={`Listen to ${essay.title}`}><span></span></button>
+              <button
+                class="playlist-play"
+                type="button"
+                data-player-toggle
+                data-listen-slug={essay.slug}
+                data-listen-title={essay.title}
+                data-listen-audio={essay.audioSrc}
+                data-listen-transcript={essay.audioTranscript}
+                data-listen-duration={essay.audioDuration}
+                disabled={!essay.audioSrc}
+                aria-label={essay.audioSrc ? `Listen to ${essay.title}` : `Audio coming soon for ${essay.title}`}
+              >
+                <span></span>
+              </button>
               <button
                 class="playlist-share"
                 type="button"

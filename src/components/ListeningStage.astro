@@ -1,17 +1,33 @@
 ---
+import { essays } from "../data/site";
+
 const { lang = "en" } = Astro.props;
 const isEs = lang === "es";
+const first = essays.find((essay) => essay.audioSrc) ?? essays[0];
+const firstTitle = isEs ? first.titleEs : first.title;
+const firstDuration = first.audioDuration ?? 0;
+const firstDurationLabel = `${Math.floor(firstDuration / 60)}:${Math.round(firstDuration % 60).toString().padStart(2, "0")}`;
 ---
 
-<section class="listening-stage" data-listening-stage data-theme="weather" aria-hidden="true">
+<section
+  class="listening-stage"
+  data-listening-stage
+  data-theme="field"
+  data-default-slug={first.slug}
+  data-default-title={firstTitle}
+  data-default-audio={first.audioSrc}
+  data-default-transcript={first.audioTranscript}
+  data-default-duration={firstDuration}
+  aria-hidden="true"
+>
   <canvas class="listening-canvas" data-listening-canvas aria-hidden="true"></canvas>
-  <audio data-listening-audio preload="metadata" src="/audio/the-weather-between-us.m4a"></audio>
+  <audio data-listening-audio preload="metadata" src={first.audioSrc}></audio>
 
   <div class="listening-shell">
     <header class="listening-header">
       <div>
         <p class="eyebrow">{isEs ? "Modo escucha" : "Listening mode"}</p>
-        <h2>{isEs ? "El clima entre nosotros" : "The Weather Between Us"}</h2>
+        <h2 data-listening-title>{firstTitle}</h2>
       </div>
       <button type="button" class="listening-close" data-listening-close aria-label={isEs ? "Cerrar escucha" : "Close listening mode"}>
         <span aria-hidden="true"></span>
@@ -27,8 +43,8 @@ const isEs = lang === "es";
     <footer class="listening-footer">
       <span data-listening-time>0:00</span>
       <div class="listening-timeline" aria-hidden="true"><span data-listening-progress></span></div>
-      <span data-listening-duration>8:57</span>
-      <span class="listening-theme" data-listening-theme>weather</span>
+      <span data-listening-duration>{firstDurationLabel}</span>
+      <span class="listening-theme" data-listening-theme>field</span>
     </footer>
   </div>
 </section>
@@ -44,6 +60,7 @@ const isEs = lang === "es";
     const previousEl = stage.querySelector("[data-listening-previous]");
     const currentEl = stage.querySelector("[data-listening-current]");
     const nextEl = stage.querySelector("[data-listening-next]");
+    const titleEl = stage.querySelector("[data-listening-title]");
     const timeEl = stage.querySelector("[data-listening-time]");
     const durationEl = stage.querySelector("[data-listening-duration]");
     const progressEl = stage.querySelector("[data-listening-progress]");
@@ -51,8 +68,18 @@ const isEs = lang === "es";
     const closeButton = stage.querySelector("[data-listening-close]");
     const playerTimeEl = document.querySelector("[data-player-time]");
     const playerProgressEl = document.querySelector("[data-player-progress] span");
+    const playerTitleEl = document.querySelector("[data-player-title]");
+    const playerDurationEl = document.querySelector("[data-player-duration]");
+    const playerQueueItems = document.querySelectorAll("[data-player-queue-item]");
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
+    let activeEpisode = {
+      slug: stage.dataset.defaultSlug || "the-cure-is-the-care",
+      title: stage.dataset.defaultTitle || "The Cure Is the Care",
+      audioSrc: stage.dataset.defaultAudio || "/audio/the-cure-is-the-care-pharmakon.wav",
+      transcriptSrc: stage.dataset.defaultTranscript || "",
+      duration: Number(stage.dataset.defaultDuration || 0)
+    };
     let transcript = null;
     let activeIndex = -1;
     let raf = 0;
@@ -70,7 +97,7 @@ const isEs = lang === "es";
       field: [[118, 95, 88, 0.2], [181, 66, 86, 0.1]]
     };
 
-    const poeticCues = [
+    const weatherCues = [
       { start: 0, end: 22, text: "weather", theme: "weather", x: 0.48, y: 0.49, size: 0.2, density: 6, lead: 6, tail: 16 },
       { start: 8, end: 38, text: "slower than feeling", theme: "weather", x: 0.52, y: 0.4, size: 0.1, density: 7, lead: 8, tail: 18 },
       { start: 25, end: 58, text: "feeling needs time", theme: "field", x: 0.46, y: 0.58, size: 0.11, density: 7 },
@@ -95,6 +122,28 @@ const isEs = lang === "es";
       { start: 474, end: 512, text: "between us", theme: "weather", x: 0.56, y: 0.51, size: 0.15, density: 6 },
       { start: 502, end: 538, text: "weather", theme: "weather", x: 0.48, y: 0.5, size: 0.21, density: 6, lead: 8, tail: 18 }
     ];
+
+    const cureCues = [
+      { start: 0, end: 24, text: "the cure is the care", theme: "field", x: 0.5, y: 0.5, size: 0.2, density: 6, lead: 6, tail: 20 },
+      { start: 18, end: 58, text: "language is a pharmakon", theme: "coda", x: 0.5, y: 0.42, size: 0.12, density: 7 },
+      { start: 48, end: 92, text: "the grasping half", theme: "field", x: 0.44, y: 0.56, size: 0.14, density: 7 },
+      { start: 82, end: 132, text: "the attending half", theme: "alicia", x: 0.56, y: 0.46, size: 0.14, density: 7 },
+      { start: 118, end: 170, text: "care decides the dose", theme: "house", x: 0.5, y: 0.55, size: 0.12, density: 7 },
+      { start: 154, end: 218, text: "not more language", theme: "coda", x: 0.46, y: 0.43, size: 0.12, density: 7 },
+      { start: 202, end: 266, text: "more care inside language", theme: "alicia", x: 0.54, y: 0.56, size: 0.1, density: 7 },
+      { start: 250, end: 314, text: "a tool can cure or poison", theme: "house", x: 0.47, y: 0.47, size: 0.11, density: 7 },
+      { start: 298, end: 366, text: "scale means proportion", theme: "field", x: 0.52, y: 0.55, size: 0.12, density: 7 },
+      { start: 352, end: 426, text: "the human dose", theme: "coda", x: 0.5, y: 0.43, size: 0.17, density: 6 },
+      { start: 410, end: 488, text: "attention relation authorship", theme: "alicia", x: 0.52, y: 0.56, size: 0.09, density: 7 },
+      { start: 470, end: 548, text: "language that returns us", theme: "field", x: 0.48, y: 0.45, size: 0.1, density: 7 },
+      { start: 532, end: 612, text: "human scale", theme: "coda", x: 0.5, y: 0.55, size: 0.18, density: 6 },
+      { start: 594, end: 676, text: "care", theme: "alicia", x: 0.5, y: 0.48, size: 0.23, density: 6, tail: 28 }
+    ];
+
+    const cueSets = {
+      "the-cure-is-the-care": cureCues,
+      "the-weather-between-us": weatherCues
+    };
 
     function formatTime(value) {
       if (!Number.isFinite(value)) return "0:00";

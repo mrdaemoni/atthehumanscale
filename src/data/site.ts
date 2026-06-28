@@ -23,6 +23,8 @@ export const essays = [
     dek:
       "A large language model is the grasping half of language, concentrated. It can complete a poisoning already underway, or help us recover the attending half. What decides is care.",
     minutes: 10,
+    audioSrc: "/audio/the-cure-is-the-care-pharmakon.wav",
+    audioDuration: 675.33,
     angle: "Language as pharmakon, and care as the human-scale dose.",
     angleEs:
       "El lenguaje como fármaco, y el cuidado como la dosis a escala humana.",
@@ -38,6 +40,9 @@ export const essays = [
     dek:
       "Why the honest unit between us is slower than a feeling, and why personal AI should learn to read what only time reveals.",
     minutes: 11,
+    audioSrc: "/audio/the-weather-between-us.m4a",
+    audioTranscript: "/audio/the-weather-between-us.transcript.json",
+    audioDuration: 537.5,
     angle: "Weather, duration, and what only time can reveal.",
     angleEs:
       "Clima, duración y lo que solo el tiempo puede revelar.",

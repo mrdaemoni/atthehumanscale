@@ -3,22 +3,45 @@ import { essays } from "../data/site";
 
 const { lang = "en" } = Astro.props;
 const isEs = lang === "es";
-const activeSlug = "the-weather-between-us";
-const first = essays.find((essay) => essay.slug === activeSlug) ?? essays[0];
+const first = essays.find((essay) => essay.audioSrc) ?? essays[0];
+const formatDuration = (value?: number) => {
+  if (!value) return "0:00";
+  const minutes = Math.floor(value / 60);
+  const seconds = Math.round(value % 60).toString().padStart(2, "0");
+  return `${minutes}:${seconds}`;
+};
 ---
 
-<aside class="listen-player" data-player aria-label={isEs ? "Reproductor del libro" : "Book audio player"}>
-  <button class="listen-toggle" type="button" aria-label={isEs ? "Reproducir audio" : "Play audio"} data-player-toggle>
+<aside
+  class="listen-player"
+  data-player
+  data-current-slug={first.slug}
+  data-current-title={isEs ? first.titleEs : first.title}
+  data-current-audio={first.audioSrc}
+  data-current-duration={first.audioDuration}
+  aria-label={isEs ? "Reproductor del libro" : "Book audio player"}
+>
+  <button
+    class="listen-toggle"
+    type="button"
+    aria-label={isEs ? "Reproducir audio" : "Play audio"}
+    data-player-toggle
+    data-listen-slug={first.slug}
+    data-listen-title={isEs ? first.titleEs : first.title}
+    data-listen-audio={first.audioSrc}
+    data-listen-transcript={first.audioTranscript}
+    data-listen-duration={first.audioDuration}
+  >
     <span></span>
   </button>
   <div class="listen-copy">
     <p>{isEs ? "Leyendo ahora" : "Now reading"}</p>
-    <strong>{isEs ? first.titleEs : first.title}</strong>
+    <strong data-player-title>{isEs ? first.titleEs : first.title}</strong>
     <div class="listen-progress" aria-hidden="true" data-player-progress><span></span></div>
   </div>
   <div class="listen-time" aria-label={isEs ? "Tiempo de audio" : "Audio time"}>
     <span data-player-time>0:00</span>
-    <span>8:57</span>
+    <span data-player-duration>{formatDuration(first.audioDuration)}</span>
   </div>
   <div class="listen-modes" aria-label={isEs ? "Idioma" : "Language"}>
     <a href="/#essays" aria-current={!isEs ? "true" : undefined}>EN</a>
@@ -26,7 +49,7 @@ const first = essays.find((essay) => essay.slug === activeSlug) ?? essays[0];
   </div>
   <ol class="listen-queue" aria-label={isEs ? "Lista de escucha" : "Listening queue"}>
     {essays.map((essay) => (
-      <li class={essay.slug === activeSlug ? "active" : ""}>
+      <li class={essay.slug === first.slug ? "active" : ""} data-player-queue-item={essay.slug}>
         <a href={isEs ? `/es/ensayos/${essay.esSlug}/` : `/essays/${essay.slug}/`}>
           <span>{essay.number}</span>
           <em>{isEs ? essay.titleEs : essay.title}</em>
@@ -40,13 +63,50 @@ const first = essays.find((essay) => essay.slug === activeSlug) ?? essays[0];
   (() => {
     const player = document.querySelector("[data-player]");
     const toggles = document.querySelectorAll("[data-player-toggle]");
+    const titleEl = player?.querySelector("[data-player-title]");
+    const durationEl = player?.querySelector("[data-player-duration]");
+    const queueItems = document.querySelectorAll("[data-player-queue-item]");
     if (!player || !toggles.length) return;
+
+    function formatTime(value) {
+      const number = Number(value);
+      if (!Number.isFinite(number) || number <= 0) return "0:00";
+      const minutes = Math.floor(number / 60);
+      const seconds = Math.round(number % 60).toString().padStart(2, "0");
+      return `${minutes}:${seconds}`;
+    }
+
+    function episodeFromToggle(toggle) {
+      return {
+        slug: toggle.dataset.listenSlug || player.dataset.currentSlug || "",
+        title: toggle.dataset.listenTitle || player.dataset.currentTitle || "",
+        audioSrc: toggle.dataset.listenAudio || player.dataset.currentAudio || "",
+        transcriptSrc: toggle.dataset.listenTranscript || "",
+        duration: Number(toggle.dataset.listenDuration || player.dataset.currentDuration || 0)
+      };
+    }
+
+    function updatePlayer(episode) {
+      if (!episode?.audioSrc) return;
+      player.dataset.currentSlug = episode.slug;
+      player.dataset.currentTitle = episode.title;
+      player.dataset.currentAudio = episode.audioSrc;
+      player.dataset.currentDuration = String(episode.duration || "");
+      if (titleEl) titleEl.textContent = episode.title;
+      if (durationEl) durationEl.textContent = formatTime(episode.duration);
+      queueItems.forEach((item) => {
+        item.classList.toggle("active", item.dataset.playerQueueItem === episode.slug);
+      });
+    }
 
     toggles.forEach((toggle) => {
       toggle.addEventListener("click", (event) => {
         event.preventDefault();
+        if (toggle.disabled) return;
+        const episode = episodeFromToggle(toggle);
+        updatePlayer(episode);
         if (window.HumanScaleListening?.toggle) {
-          window.HumanScaleListening.toggle();
+          window.HumanScaleListening.toggle(episode);
           return;
         }
 
@@ -54,7 +114,10 @@ const first = essays.find((essay) => essay.slug === activeSlug) ?? essays[0];
         const next = !isPlaying;
         player.dataset.playing = next ? "true" : "false";
         document.documentElement.dataset.listening = next ? "true" : "false";
-        toggles.forEach((item) => item.setAttribute("aria-pressed", String(next)));
+        toggles.forEach((item) => {
+          const sameEpisode = !item.dataset.listenSlug || item.dataset.listenSlug === episode.slug;
+          item.setAttribute("aria-pressed", String(next && sameEpisode));
+        });
       });
     });
   })();
