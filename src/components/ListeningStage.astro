@@ -6,7 +6,7 @@ const isEs = lang === "es";
 const first = essays.find((essay) => essay.audioSrc) ?? essays[0];
 const firstTitle = isEs ? first.titleEs : first.title;
 const firstDuration = first.audioDuration ?? 0;
-const firstDurationLabel = `${Math.floor(firstDuration / 60)}:${Math.round(firstDuration % 60).toString().padStart(2, "0")}`;
+const firstDurationLabel = `${Math.floor(firstDuration / 60)}:${Math.floor(firstDuration % 60).toString().padStart(2, "0")}`;
 ---
 
 <section
@@ -415,7 +415,10 @@ const firstDurationLabel = `${Math.floor(firstDuration / 60)}:${Math.round(first
       const toggles = document.querySelectorAll("[data-player-toggle]");
       if (player) player.dataset.playing = isPlaying ? "true" : "false";
       document.documentElement.dataset.listening = isPlaying ? "true" : "false";
-      toggles.forEach((toggle) => toggle.setAttribute("aria-pressed", String(isPlaying)));
+      toggles.forEach((toggle) => {
+        const sameEpisode = !toggle.dataset.listenSlug || toggle.dataset.listenSlug === activeEpisode.slug;
+        toggle.setAttribute("aria-pressed", String(isPlaying && sameEpisode));
+      });
     }
 
     function fallbackTranscript() {
@@ -578,7 +581,7 @@ const firstDurationLabel = `${Math.floor(firstDuration / 60)}:${Math.round(first
       stage.dataset.open = "true";
       stage.setAttribute("aria-hidden", "false");
       syncChrome(true);
-      await loadTranscript();
+      loadTranscript().then(updateText);
       const playPromise = audio.play();
       try {
         await playPromise;
