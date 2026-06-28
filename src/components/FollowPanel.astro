@@ -8,11 +8,13 @@ const isEs = lang === "es";
   <div class="follow-card" role="dialog" aria-modal="true" aria-labelledby="follow-title">
     <button class="follow-close" type="button" data-follow-close aria-label={isEs ? "Cerrar" : "Close"}>x</button>
     <p class="eyebrow">{isEs ? "Libro" : "Book"}</p>
-    <h2 id="follow-title">{isEs ? "El libro viene pronto." : "Book is coming soon."}</h2>
+    <h2 id="follow-title">
+      {isEs ? "El libro se está escribiendo en público." : "The book is being written in public."}
+    </h2>
     <p>
       {isEs
-        ? "Escribe tu email para ser la primera persona en saber cuando esté listo para enviarse."
-        : "Enter your email to be the first to know when it is ready to ship."}
+        ? "Recibe nuevos ensayos, fragmentos de conversaciones y notas del libro mientras La escala humana se escribe."
+        : "Get new essays, conversation fragments, and book notes as At the Human Scale is written."}
     </p>
     <form name={isEs ? "libro-lista" : "book-waitlist"} method="POST" data-netlify="true" action="/thanks/" class="follow-form">
       <input type="hidden" name="form-name" value={isEs ? "libro-lista" : "book-waitlist"} />
@@ -20,7 +22,7 @@ const isEs = lang === "es";
         <span>Email</span>
         <input type="email" name="email" autocomplete="email" required placeholder={isEs ? "tu@email.com" : "you@example.com"} />
       </label>
-      <button type="submit">{isEs ? "Avísame" : "Notify me"}</button>
+      <button type="submit">{isEs ? "Seguir el libro" : "Follow the book"}</button>
     </form>
   </div>
 </aside>

@@ -16,8 +16,9 @@ const { title = "At the Human Scale", lang = "en", className = "" } = Astro.prop
       const isEssayTitle = canvas.classList.contains("essay-title-canvas");
       const isHomeTitle = canvas.classList.contains("home-title-canvas");
       const isIndexTitle = canvas.classList.contains("index-title-canvas");
+      const isThresholdTitle = canvas.classList.contains("threshold-title-canvas");
       const isBookTitle = canvas.classList.contains("book-title-canvas");
-      const isWaveTitle = isEssayTitle || isHomeTitle || isIndexTitle || canvas.classList.contains("wave-title-canvas");
+      const isWaveTitle = isEssayTitle || isHomeTitle || isIndexTitle || isThresholdTitle || canvas.classList.contains("wave-title-canvas");
       const state = {
         width: 0,
         height: 0,
@@ -35,7 +36,12 @@ const { title = "At the Human Scale", lang = "en", className = "" } = Astro.prop
         if (raw === "At the Human Scale") return state.width < 850 ? ["At the", "Human", "Scale"] : ["At the", "Human Scale"];
         if (raw === "At human scale") return state.width < 850 ? ["At", "human", "scale"] : ["At human", "scale"];
         if (raw === "La escala humana") return ["La escala", "humana"];
+        if (raw === "Start here") return state.width < 760 ? ["Start", "here"] : ["Start here"];
+        if (raw === "Empieza aquí") return state.width < 760 ? ["Empieza", "aquí"] : ["Empieza aquí"];
         if (raw === "Book is coming soon.") return state.width < 900 ? ["Book is", "coming", "soon."] : ["Book is", "coming soon."];
+        if (raw === "The book is being written in public.") {
+          return state.width < 860 ? ["The book is", "being written", "in public."] : ["The book is being", "written in public."];
+        }
         if (raw === "Read or listen to the living book") {
           return state.width < 720 ? ["Read", "or listen", "to the book"] : ["Read or listen", "to the living", "book"];
         }
@@ -52,6 +58,8 @@ const { title = "At the Human Scale", lang = "en", className = "" } = Astro.prop
             ? Math.min(state.width / 4.7, state.height / 1.7)
             : isBookTitle
               ? Math.min(state.width / 4.3, state.height / 1.9)
+              : isThresholdTitle
+                ? Math.min(state.width / 5.4, state.height / 1.75)
               : isIndexTitle
                 ? Math.min(state.width / 6.8, state.height / 2.9)
                 : Math.min(state.width / 7.5, state.height / 2.8);
@@ -61,6 +69,8 @@ const { title = "At the Human Scale", lang = "en", className = "" } = Astro.prop
             ? Math.max(96, Math.min(230, base))
             : isBookTitle
               ? Math.max(92, Math.min(220, base))
+              : isThresholdTitle
+                ? Math.max(82, Math.min(178, base))
               : isIndexTitle
                 ? Math.max(70, Math.min(164, base))
                 : Math.max(58, Math.min(156, base));
@@ -68,7 +78,7 @@ const { title = "At the Human Scale", lang = "en", className = "" } = Astro.prop
         const totalHeight = leading * (lines.length - 1);
         const startY =
           state.height *
-            (isEssayTitle ? 0.48 : isHomeTitle ? 0.42 : isBookTitle ? 0.46 : isIndexTitle ? 0.5 : 0.24) -
+            (isEssayTitle ? 0.48 : isHomeTitle ? 0.42 : isBookTitle ? 0.46 : isThresholdTitle ? 0.52 : isIndexTitle ? 0.5 : 0.24) -
           totalHeight / 2;
         return { fontSize, leading, startY };
       }
@@ -225,9 +235,9 @@ const { title = "At the Human Scale", lang = "en", className = "" } = Astro.prop
           const x = state.width * 0.03 + (index % 2) * state.width * 0.075;
           const y = startY + index * leading;
           ctx.lineWidth = isWaveTitle ? 1 : 0.9;
-          ctx.strokeStyle = `rgba(32, 35, 31, ${isIndexTitle ? 0.27 : isWaveTitle ? 0.2 : 0.16})`;
+          ctx.strokeStyle = `rgba(32, 35, 31, ${isIndexTitle ? 0.27 : isThresholdTitle ? 0.34 : isWaveTitle ? 0.2 : 0.16})`;
           ctx.strokeText(line, x, y);
-          ctx.fillStyle = `rgba(32, 35, 31, ${isIndexTitle ? 0.028 : isWaveTitle ? 0.018 : 0.012})`;
+          ctx.fillStyle = `rgba(32, 35, 31, ${isIndexTitle ? 0.028 : isThresholdTitle ? 0.04 : isWaveTitle ? 0.018 : 0.012})`;
           ctx.fillText(line, x, y);
           ctx.strokeStyle = `rgba(36, 79, 115, ${isWaveTitle ? 0.05 : 0.038})`;
           ctx.strokeText(line, x - 1, y + 1);

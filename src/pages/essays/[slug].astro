@@ -23,6 +23,7 @@ const related = essays.filter((item) => item.slug !== frontmatter.slug);
   description={frontmatter.description ?? frontmatter.dek}
   image={`/og/${frontmatter.slug}.png`}
   bodyClass="essay-body"
+  alternateEsPath={essay?.esSlug ? `/ensayos/${essay.esSlug}/` : undefined}
 >
   <main class="essay-shell">
     <article class="essay-article">

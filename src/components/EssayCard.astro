@@ -1,11 +1,12 @@
 ---
 const { essay, lang = "en", compact = false } = Astro.props;
 const isEs = lang === "es";
-const href = isEs ? `/essays/${essay.slug}/` : `/essays/${essay.slug}/`;
+const href = isEs ? `/es/ensayos/${essay.esSlug}/` : `/essays/${essay.slug}/`;
+const label = isEs ? `Leer ${essay.titleEs}` : `Read ${essay.title}`;
 ---
 
 <article class:list={["essay-card", { compact }]}>
-  <a href={href} aria-label={`Read ${essay.title}`}>
+  <a href={href} aria-label={label}>
     <div class="essay-thumb" style={`background-image: url('${essay.cover}')`}></div>
     <div class="essay-card-body">
       <p class="kicker">{essay.number} / {essay.date}</p>

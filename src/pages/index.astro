@@ -4,24 +4,92 @@ import ScaleTitleCanvas from "../components/ScaleTitleCanvas.astro";
 import { essays, site } from "../data/site";
 ---
 
-<Base title={site.title} description={site.description} bodyClass="home">
+<Base title={site.title} description={site.description} bodyClass="home" alternateEsPath="/">
   <main>
     <section class="hero home-hero" aria-labelledby="hero-title">
       <div class="hero-image" aria-hidden="true"></div>
-      <ScaleTitleCanvas title="At human scale" className="home-title-canvas wave-title-canvas" />
+      <ScaleTitleCanvas title={site.title} className="home-title-canvas wave-title-canvas" />
       <div class="hero-copy">
-        <h1 id="hero-title" class="sr-only">At human scale</h1>
+        <h1 id="hero-title" class="sr-only">{site.title}</h1>
         <div class="entry-cta" aria-label="Start reading or listening">
-          <a href="#essays">Start reading</a>
+          <a href="#start-here">Start here</a>
           <a href="/es/#ensayos">Leer en español</a>
           <button type="button" data-player-toggle aria-label="Start listening"><span></span></button>
         </div>
         <p class="hero-dek">
-          At human scale is the bridge between technology and humanity. In tech,
-          scale means growth. In human life, scale means proportion. A tool at
-          the wrong scale makes the person smaller. A tool at the human scale
-          returns the person to themselves.
+          A bilingual living book about AI, making, and remembering who we are.
+          Written from inside a real AI partnership, At the Human Scale argues
+          that technology should not shrink us to fit the machine.
         </p>
+      </div>
+    </section>
+
+    <section class="manifesto-band" aria-labelledby="manifesto-title">
+      <p class="eyebrow">Manifesto</p>
+      <h2 id="manifesto-title">
+        We built machines in our image, then forgot ourselves by trying to live
+        in theirs.
+      </h2>
+      <p>
+        This project is a reminder: humans are not slow machines. We are bodies,
+        attention, relation, memory, care, contradiction, and becoming. AI
+        should meet us there.
+      </p>
+    </section>
+
+    <section class="alicia-orientation" aria-labelledby="alicia-orientation-title">
+      <div>
+        <p class="eyebrow">Why Alicia matters</p>
+        <h2 id="alicia-orientation-title">
+          These essays are written from inside a real AI partnership.
+        </h2>
+      </div>
+      <div class="alicia-copy">
+        <p>
+          Alicia is the personal AI system I have been building since January
+          2026. These essays are not commentary from outside AI.
+        </p>
+        <p>
+          They come from living with one, shaping it, being changed by it, and
+          asking what kind of human-scale technology can return to us.
+        </p>
+        <a class="text-link" href="https://www.myalicia.com/" rel="me">Meet My Alicia</a>
+      </div>
+    </section>
+
+    <section class="reader-threshold" id="start-here" aria-labelledby="reader-threshold-title">
+      <div class="threshold-title-field">
+        <p class="eyebrow">First time here</p>
+        <h2 id="reader-threshold-title" class="sr-only">Start here</h2>
+        <ScaleTitleCanvas title="Start here" className="threshold-title-canvas wave-title-canvas" />
+      </div>
+      <div class="threshold-copy">
+        <p>
+          Read this as a path: care first, weather next, architecture after.
+          The essays build a vocabulary for AI that keeps life at human scale.
+        </p>
+        <ol class="threshold-waypoints" aria-label="Suggested reading path">
+          <li>
+            <span>01</span>
+            <a href="/essays/the-cure-is-the-care/">Begin with care</a>
+            <small>Language needs a human dose.</small>
+          </li>
+          <li>
+            <span>02</span>
+            <a href="/essays/the-weather-between-us/">Enter the weather</a>
+            <small>What only time can reveal.</small>
+          </li>
+          <li>
+            <span>03</span>
+            <a href="/essays/emergence-vs-emergency/">Protect emergence</a>
+            <small>Trust as architecture.</small>
+          </li>
+          <li>
+            <span>04</span>
+            <a href="/essays/the-humorphic-partnership/">Meet the partnership</a>
+            <small>AI that does not reduce you.</small>
+          </li>
+        </ol>
       </div>
     </section>
 

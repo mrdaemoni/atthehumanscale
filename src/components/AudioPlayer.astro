@@ -27,7 +27,7 @@ const first = essays.find((essay) => essay.slug === activeSlug) ?? essays[0];
   <ol class="listen-queue" aria-label={isEs ? "Lista de escucha" : "Listening queue"}>
     {essays.map((essay) => (
       <li class={essay.slug === activeSlug ? "active" : ""}>
-        <a href={`/essays/${essay.slug}/`}>
+        <a href={isEs ? `/es/ensayos/${essay.esSlug}/` : `/essays/${essay.slug}/`}>
           <span>{essay.number}</span>
           <em>{isEs ? essay.titleEs : essay.title}</em>
         </a>

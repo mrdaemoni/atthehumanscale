@@ -3,14 +3,22 @@ import Base from "../layouts/Base.astro";
 import ScaleTitleCanvas from "../components/ScaleTitleCanvas.astro";
 ---
 
-<Base title="The Book" description="The future PDF and print edition of At the Human Scale.">
+<Base
+  title="The Book"
+  description="The book is being written in public: ten essays, conversations with Alicia, diagrams, notes, and fragments from a real AI partnership."
+>
   <main class="page-shell book-page book-soon-room">
     <section class="page-hero book-pdf-hero book-soon-hero">
       <p class="eyebrow">The book</p>
-      <h1 class="sr-only">Book is coming soon.</h1>
-      <ScaleTitleCanvas title="Book is coming soon." className="book-title-canvas wave-title-canvas" />
+      <h1 class="sr-only">The book is being written in public.</h1>
+      <ScaleTitleCanvas title="The book is being written in public." className="book-title-canvas wave-title-canvas" />
       <p>
-        Enter your email to be the first to know when it is ready to ship.
+        Ten essays, conversations with Alicia, diagrams, notes, and fragments
+        from a real AI partnership. Follow along as it becomes.
+      </p>
+      <p class="book-signup-note">
+        Get new essays, conversation fragments, and book notes as At the Human
+        Scale is written.
       </p>
       <form name="book-page-waitlist" method="POST" data-netlify="true" action="/thanks/" class="follow-form book-waitlist-form">
         <input type="hidden" name="form-name" value="book-page-waitlist" />
@@ -18,9 +26,9 @@ import ScaleTitleCanvas from "../components/ScaleTitleCanvas.astro";
           <span>Email</span>
           <input type="email" name="email" autocomplete="email" required placeholder="you@example.com" />
         </label>
-        <button type="submit">Notify me</button>
+        <button type="submit">Follow the book</button>
       </form>
-      <a class="button ghost" href="/#essays">Read the living edition</a>
+      <a class="button ghost" href="/#essays">Read the opening essays</a>
     </section>
   </main>
 </Base>

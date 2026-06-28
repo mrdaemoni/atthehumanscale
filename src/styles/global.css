@@ -457,6 +457,179 @@ p {
   margin: clamp(-10px, -1vw, 0px) auto 0;
 }
 
+.manifesto-band,
+.alicia-orientation {
+  position: relative;
+  padding: clamp(54px, 8vw, 112px) clamp(22px, 6vw, 82px);
+}
+
+.manifesto-band {
+  display: grid;
+  gap: clamp(20px, 3vw, 34px);
+  border-top: 1px solid rgba(38, 24, 23, 0.1);
+  border-bottom: 1px solid rgba(38, 24, 23, 0.1);
+  background:
+    linear-gradient(90deg, rgba(38, 24, 23, 0.035) 1px, transparent 1px) 0 0 / 34px 34px,
+    linear-gradient(180deg, rgba(255, 248, 239, 0.26), rgba(244, 196, 195, 0.08));
+}
+
+.manifesto-band h2 {
+  max-width: 1160px;
+  font-size: clamp(42px, 7vw, 108px);
+  line-height: 0.94;
+}
+
+.manifesto-band p:not(.eyebrow) {
+  max-width: 900px;
+  color: rgba(38, 24, 23, 0.72);
+  font-family: var(--serif);
+  font-size: clamp(22px, 2.7vw, 38px);
+  line-height: 1.12;
+}
+
+.alicia-orientation {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.82fr) minmax(320px, 1.18fr);
+  gap: clamp(28px, 6vw, 88px);
+  align-items: start;
+  border-bottom: 1px solid rgba(38, 24, 23, 0.09);
+}
+
+.alicia-orientation h2 {
+  max-width: 650px;
+  font-size: clamp(34px, 5.5vw, 78px);
+}
+
+.alicia-copy {
+  display: grid;
+  gap: 18px;
+  max-width: 720px;
+}
+
+.alicia-copy p {
+  color: rgba(38, 24, 23, 0.72);
+  font-family: var(--serif);
+  font-size: clamp(20px, 2.1vw, 30px);
+  line-height: 1.22;
+}
+
+.reader-threshold {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  align-items: start;
+  padding: clamp(34px, 5.5vw, 82px) clamp(22px, 6vw, 82px) clamp(54px, 7vw, 104px);
+  overflow: hidden;
+}
+
+.reader-threshold::before {
+  content: "";
+  position: absolute;
+  inset: -80px 0 -50px;
+  background:
+    radial-gradient(circle at 18% 22%, rgba(65, 111, 123, 0.035), transparent 36%),
+    radial-gradient(circle, rgba(38, 24, 23, 0.04) 0 1px, transparent 1.6px) 0 0 / 31px 31px,
+    linear-gradient(180deg, rgba(255, 248, 239, 0.02), rgba(181, 66, 86, 0.035) 44%, rgba(255, 248, 239, 0.015));
+  opacity: 0.82;
+  pointer-events: none;
+}
+
+.reader-threshold::after {
+  content: "";
+  position: absolute;
+  left: clamp(22px, 6vw, 82px);
+  right: clamp(22px, 6vw, 82px);
+  bottom: 18px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(65, 111, 123, 0.2), transparent);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.threshold-title-field {
+  position: relative;
+  min-height: clamp(270px, 40vh, 470px);
+}
+
+.threshold-title-field .eyebrow {
+  position: relative;
+  z-index: 2;
+  padding-top: clamp(10px, 2vw, 28px);
+}
+
+.threshold-title-canvas {
+  inset: -28px max(-58px, -4vw) 0 max(-58px, -4vw);
+  width: calc(100% + min(116px, 8vw));
+  height: 100%;
+  opacity: 0.96;
+}
+
+.threshold-copy {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  gap: clamp(22px, 3.2vw, 36px);
+  width: min(1040px, 100%);
+  margin-top: clamp(-90px, -7vw, -42px);
+  padding-bottom: clamp(16px, 3vw, 44px);
+}
+
+.threshold-copy > p {
+  max-width: 800px;
+  color: rgba(38, 24, 23, 0.72);
+  font-family: var(--serif);
+  font-size: clamp(24px, 3vw, 44px);
+  line-height: 1.08;
+}
+
+.threshold-waypoints {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(12px, 2.4vw, 28px);
+  margin: 0;
+  padding: 16px 0 0;
+  border-top: 1px solid rgba(38, 24, 23, 0.13);
+  list-style: none;
+}
+
+.threshold-waypoints li {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.threshold-waypoints span,
+.threshold-waypoints a,
+.threshold-waypoints small {
+  font-family: var(--mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.threshold-waypoints span {
+  color: rgba(170, 49, 87, 0.78);
+  font-size: 11px;
+}
+
+.threshold-waypoints a {
+  color: rgba(38, 24, 23, 0.74);
+  font-size: clamp(10px, 0.92vw, 12px);
+  line-height: 1.35;
+  text-decoration: none;
+}
+
+.threshold-waypoints a:hover {
+  color: var(--ink);
+}
+
+.threshold-waypoints small {
+  color: rgba(118, 95, 88, 0.64);
+  font-size: 9px;
+  line-height: 1.35;
+  letter-spacing: 0.08em;
+}
+
 .book-arc {
   background: transparent;
 }
@@ -1206,7 +1379,7 @@ figcaption {
   inset: auto;
   display: block;
   width: min(calc(100vw - 44px), 1120px);
-  height: clamp(360px, 52vw, 620px);
+  height: clamp(250px, 32vw, 360px);
   margin: clamp(-16px, -2vw, 0px) 0 clamp(10px, 2vw, 24px) max(-12px, -2vw);
   opacity: 0.9;
 }
@@ -1217,6 +1390,12 @@ figcaption {
   font-size: clamp(22px, 2.6vw, 34px);
   line-height: 1.12;
   color: rgba(38, 24, 23, 0.7);
+}
+
+.book-soon-hero .book-signup-note {
+  max-width: 680px;
+  color: rgba(65, 111, 123, 0.82);
+  font-size: clamp(18px, 2vw, 24px);
 }
 
 .book-waitlist-form {
@@ -1971,7 +2150,7 @@ figcaption {
     position: relative;
     inset: auto;
     width: calc(100vw - 44px);
-    height: clamp(320px, 70vw, 520px);
+    height: clamp(220px, 58vw, 340px);
     margin-left: -4px;
   }
 
@@ -2006,6 +2185,8 @@ figcaption {
   .bilingual,
   .about-band,
   .follow,
+  .alicia-orientation,
+  .reader-threshold,
   .book-form,
   .about-grid,
   .essay-shell {
@@ -2039,6 +2220,28 @@ figcaption {
     inset: 12px -22px 0;
     width: calc(100% + 44px);
     height: calc(100% - 12px);
+  }
+
+  .reader-threshold {
+    padding-top: 24px;
+  }
+
+  .threshold-title-field {
+    min-height: 290px;
+  }
+
+  .threshold-title-canvas {
+    inset: 0 -22px 0;
+    width: calc(100% + 44px);
+    height: 100%;
+  }
+
+  .threshold-copy {
+    padding-bottom: 20px;
+  }
+
+  .threshold-waypoints {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .chapter-list li:nth-child(odd) {
@@ -2117,6 +2320,12 @@ figcaption {
 
   .listen-queue {
     display: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .threshold-waypoints {
+    grid-template-columns: 1fr;
   }
 }
 

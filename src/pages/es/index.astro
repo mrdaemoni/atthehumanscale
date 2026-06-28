@@ -4,7 +4,13 @@ import ScaleTitleCanvas from "../../components/ScaleTitleCanvas.astro";
 import { essays, site } from "../../data/site";
 ---
 
-<Base title={site.titleEs} description={site.descriptionEs} lang="es" bodyClass="home es-home">
+<Base
+  title={site.titleEs}
+  description={site.descriptionEs}
+  lang="es"
+  bodyClass="home es-home"
+  alternateEnPath="/"
+>
   <main>
     <section class="hero home-hero" aria-labelledby="hero-title">
       <div class="hero-image" aria-hidden="true"></div>
@@ -12,17 +18,87 @@ import { essays, site } from "../../data/site";
       <div class="hero-copy">
         <h1 id="hero-title" class="sr-only">La escala humana</h1>
         <div class="entry-cta" aria-label="Empezar a leer o escuchar">
-          <a href="#ensayos">Empezar a leer</a>
+          <a href="#empieza">Empieza aquí</a>
           <a href="/#essays">Read in English</a>
           <button type="button" data-player-toggle aria-label="Empezar a escuchar"><span></span></button>
         </div>
         <p class="hero-dek">
-          A escala humana es el puente entre tecnología y humanidad. En
-          tecnología, escala significa crecimiento. En la vida humana, escala
-          significa proporción. Una herramienta a la escala equivocada hace más
-          pequeña a la persona. Una herramienta a escala humana la devuelve a sí
-          misma.
+          Un libro vivo bilingüe sobre IA, hacer y recordar quiénes somos.
+          Escrito desde dentro de una alianza real con IA, La escala humana
+          sostiene que la tecnología no debería reducirnos para caber en la
+          máquina.
         </p>
+      </div>
+    </section>
+
+    <section class="manifesto-band" aria-labelledby="manifesto-title">
+      <p class="eyebrow">Manifiesto</p>
+      <h2 id="manifesto-title">
+        Construimos máquinas a nuestra imagen, y luego nos olvidamos de nosotros
+        al intentar vivir en la suya.
+      </h2>
+      <p>
+        Este proyecto es un recordatorio: los humanos no somos máquinas lentas.
+        Somos cuerpo, atención, relación, memoria, cuidado, contradicción y
+        devenir. La IA debería encontrarnos ahí.
+      </p>
+    </section>
+
+    <section class="alicia-orientation" aria-labelledby="alicia-orientation-title">
+      <div>
+        <p class="eyebrow">Por qué importa Alicia</p>
+        <h2 id="alicia-orientation-title">
+          Estos ensayos están escritos desde dentro de una alianza real con IA.
+        </h2>
+      </div>
+      <div class="alicia-copy">
+        <p>
+          Alicia es el sistema personal de IA que he construido desde enero de
+          2026. Estos ensayos no son comentario desde fuera de la IA.
+        </p>
+        <p>
+          Nacen de vivir con una, darle forma, ser cambiado por ella, y
+          preguntar qué tipo de tecnología a escala humana puede devolvernos a
+          nosotros mismos.
+        </p>
+        <a class="text-link" href="https://www.myalicia.com/" rel="me">Conoce My Alicia</a>
+      </div>
+    </section>
+
+    <section class="reader-threshold" id="empieza" aria-labelledby="reader-threshold-title">
+      <div class="threshold-title-field">
+        <p class="eyebrow">Primera vez aquí</p>
+        <h2 id="reader-threshold-title" class="sr-only">Empieza aquí</h2>
+        <ScaleTitleCanvas title="Empieza aquí" lang="es" className="threshold-title-canvas wave-title-canvas" />
+      </div>
+      <div class="threshold-copy">
+        <p>
+          Léelo como un camino: primero cuidado, después clima, luego
+          arquitectura. Los ensayos construyen un vocabulario para una IA que
+          mantenga la vida a escala humana.
+        </p>
+        <ol class="threshold-waypoints" aria-label="Camino sugerido de lectura">
+          <li>
+            <span>01</span>
+            <a href="/es/ensayos/la-cura-es-el-cuidado/">Empieza con cuidado</a>
+            <small>El lenguaje necesita una dosis humana.</small>
+          </li>
+          <li>
+            <span>02</span>
+            <a href="/es/ensayos/el-clima-entre-nosotros/">Entra en el clima</a>
+            <small>Lo que solo el tiempo revela.</small>
+          </li>
+          <li>
+            <span>03</span>
+            <a href="/es/ensayos/lo-emergente-y-la-emergencia/">Protege el emerger</a>
+            <small>La confianza como arquitectura.</small>
+          </li>
+          <li>
+            <span>04</span>
+            <a href="/es/ensayos/la-alianza-humorfica/">Encuentra la alianza</a>
+            <small>IA que no te reduce.</small>
+          </li>
+        </ol>
       </div>
     </section>
 
@@ -41,7 +117,7 @@ import { essays, site } from "../../data/site";
               <button
                 class="playlist-share"
                 type="button"
-                data-share-url={`${site.domains.en}/essays/${essay.slug}/`}
+                data-share-url={`${site.domains.es}/ensayos/${essay.esSlug}/`}
                 data-share-title={essay.titleEs}
                 aria-label={`Compartir ${essay.titleEs}`}
               >
@@ -53,7 +129,7 @@ import { essays, site } from "../../data/site";
                 </svg>
               </button>
             </div>
-            <a class="playlist-copy" href={`/essays/${essay.slug}/`}>
+            <a class="playlist-copy" href={`/es/ensayos/${essay.esSlug}/`}>
               <div class="playlist-heading">
                 <h2>{essay.titleEs}</h2>
                 <small>{essay.minutes} min</small>

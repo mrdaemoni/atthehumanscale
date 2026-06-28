@@ -15,6 +15,7 @@ export const site = {
 export const essays = [
   {
     slug: "the-cure-is-the-care",
+    esSlug: "la-cura-es-el-cuidado",
     number: "01",
     title: "The Cure Is the Care",
     titleEs: "La cura es el cuidado",
@@ -29,6 +30,7 @@ export const essays = [
   },
   {
     slug: "the-weather-between-us",
+    esSlug: "el-clima-entre-nosotros",
     number: "02",
     title: "The Weather Between Us",
     titleEs: "El clima entre nosotros",
@@ -43,9 +45,10 @@ export const essays = [
   },
   {
     slug: "emergence-vs-emergency",
+    esSlug: "lo-emergente-y-la-emergencia",
     number: "03",
     title: "Emergence vs. Emergency",
-    titleEs: "Emerger o entrar en emergencia",
+    titleEs: "Lo emergente y la emergencia",
     date: "June 8, 2026",
     dek: "Why the collaborators worth keeping are the ones who surprise you.",
     minutes: 9,
@@ -56,6 +59,7 @@ export const essays = [
   },
   {
     slug: "the-humorphic-partnership",
+    esSlug: "la-alianza-humorfica",
     number: "04",
     title: "The Humorphic Partnership",
     titleEs: "La alianza humórfica",

@@ -12,10 +12,29 @@ const {
   description = site.description,
   lang = "en",
   image = "/og/the-cure-is-the-care.png",
-  bodyClass = ""
+  bodyClass = "",
+  canonicalPath,
+  alternateEnPath,
+  alternateEsPath
 } = Astro.props;
 
-const canonical = new URL(Astro.url.pathname, site.domains.en).toString();
+const normalizePath = (path: string) => (path.startsWith("/") ? path : `/${path}`);
+const canonicalBase = lang === "es" ? site.domains.es : site.domains.en;
+const defaultCanonicalPath =
+  lang === "es" ? Astro.url.pathname.replace(/^\/es\/?/, "/") : Astro.url.pathname;
+const canonical = new URL(
+  normalizePath(canonicalPath ?? defaultCanonicalPath),
+  canonicalBase
+).toString();
+const alternateEnHref = (alternateEnPath || lang === "en")
+  ? new URL(normalizePath(alternateEnPath ?? Astro.url.pathname), site.domains.en).toString()
+  : undefined;
+const alternateEsHref = (alternateEsPath || lang === "es")
+  ? new URL(
+      normalizePath(alternateEsPath ?? Astro.url.pathname.replace(/^\/es\/?/, "/")),
+      site.domains.es
+    ).toString()
+  : undefined;
 const fullTitle = title === site.title ? title : `${title} | ${site.title}`;
 ---
 
@@ -28,8 +47,8 @@ const fullTitle = title === site.title ? title : `${title} | ${site.title}`;
     <meta name="author" content={site.author} />
     <meta name="theme-color" content="#f4dcdd" />
     <link rel="canonical" href={canonical} />
-    <link rel="alternate" hreflang="en" href={site.domains.en + Astro.url.pathname.replace(/^\/es\/?/, "/")} />
-    <link rel="alternate" hreflang="es" href={site.domains.es + Astro.url.pathname.replace(/^\/es\/?/, "/")} />
+    {alternateEnHref && <link rel="alternate" hreflang="en" href={alternateEnHref} />}
+    {alternateEsHref && <link rel="alternate" hreflang="es" href={alternateEsHref} />}
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />

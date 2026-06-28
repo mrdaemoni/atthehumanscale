@@ -1,9 +1,13 @@
 ---
-import { site } from "../data/site";
+import { essays, site } from "../data/site";
 
 const { lang = "en" } = Astro.props;
 const isEs = lang === "es";
 const path = Astro.url.pathname;
+const enEssaySlug = path.match(/^\/essays\/([^/]+)\/?$/)?.[1];
+const esEssaySlug = path.match(/^\/es\/ensayos\/([^/]+)\/?$/)?.[1];
+const enEssay = essays.find((essay) => essay.slug === enEssaySlug);
+const esEssay = essays.find((essay) => essay.esSlug === esEssaySlug);
 
 const labels = isEs
   ? {
@@ -24,23 +28,27 @@ const labels = isEs
     };
 
 const langHref = isEs
-  ? path.startsWith("/es/ensayos")
-    ? "/#essays"
-    : path.replace(/^\/es\/?/, "/") || "/"
-  : path.startsWith("/essays")
-    ? "/es/#ensayos"
-    : "/es/";
+  ? esEssay
+    ? `/essays/${esEssay.slug}/`
+    : path.startsWith("/es/ensayos")
+      ? "/#essays"
+      : path.replace(/^\/es\/?/, "/") || "/"
+  : enEssay
+    ? `/es/ensayos/${enEssay.esSlug}/`
+    : path.startsWith("/essays")
+      ? "/es/#ensayos"
+      : "/es/";
 ---
 
 <header class="site-header" data-lang={lang}>
   <a class="wordmark" href={isEs ? "/es/" : "/"} aria-label={labels.home}>
-    <span>{isEs ? "La escala humana" : "At human scale"}</span>
+    <span>{isEs ? "La escala humana" : "At the Human Scale"}</span>
     <small>{isEs ? "un libro en proceso" : "a living book"}</small>
   </a>
   <nav class="site-nav" aria-label="Primary">
     <a href={isEs ? "/es/#ensayos" : "/#essays"}>{labels.essays}</a>
     <a href="/book/">{labels.book}</a>
-    <a href="https://www.myalicia.com/" rel="me">{labels.about}</a>
+    <a href="/about/">{labels.about}</a>
     <button type="button" class="nav-button" data-follow-open>{labels.follow}</button>
     <a class="language-link" href={langHref} hreflang={isEs ? "en" : "es"}>{labels.lang}</a>
   </nav>
