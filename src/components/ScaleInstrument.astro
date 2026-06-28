@@ -3,7 +3,7 @@ const { lang = "en" } = Astro.props;
 const isEs = lang === "es";
 ---
 
-<div class="scale-instrument" aria-label={isEs ? "Diagrama de escala humana y escala tecnica" : "Human scale and technical scale diagram"}>
+<div class="scale-instrument" aria-label={isEs ? "Diagrama de escala humana y escala máquina" : "Human scale and machine scale diagram"}>
   <div class="depth-field">
     <p>{isEs ? "escala humana" : "human scale"}</p>
     <span>{isEs ? "profundidad" : "depth"}</span>

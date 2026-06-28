@@ -9,12 +9,12 @@ const isEs = lang === "es";
     <button class="follow-close" type="button" data-follow-close aria-label={isEs ? "Cerrar" : "Close"}>x</button>
     <p class="eyebrow">{isEs ? "Libro" : "Book"}</p>
     <h2 id="follow-title">
-      {isEs ? "El libro se está escribiendo en público." : "The book is being written in public."}
+      {isEs ? "El libro está tomando forma en público." : "The book is taking shape in public."}
     </h2>
     <p>
       {isEs
-        ? "Recibe nuevos ensayos, fragmentos de conversaciones y notas del libro mientras La escala humana se escribe."
-        : "Get new essays, conversation fragments, and book notes as At the Human Scale is written."}
+        ? "Recibe los próximos ensayos, fragmentos de Alicia y notas del libro mientras el proyecto avanza."
+        : "Get the next essays, Alicia fragments, and book notes as the project develops."}
     </p>
     <form name={isEs ? "libro-lista" : "book-waitlist"} method="POST" data-netlify="true" action="/thanks/" class="follow-form">
       <input type="hidden" name="form-name" value={isEs ? "libro-lista" : "book-waitlist"} />

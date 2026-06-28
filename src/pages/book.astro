@@ -5,20 +5,21 @@ import ScaleTitleCanvas from "../components/ScaleTitleCanvas.astro";
 
 <Base
   title="The Book"
-  description="The book is being written in public: ten essays, conversations with Alicia, diagrams, notes, and fragments from a real AI partnership."
+  description="At the Human Scale is becoming a book: essays, Alicia conversations, diagrams, notes, and artifacts from a real AI partnership."
 >
   <main class="page-shell book-page book-soon-room">
     <section class="page-hero book-pdf-hero book-soon-hero">
       <p class="eyebrow">The book</p>
-      <h1 class="sr-only">The book is being written in public.</h1>
-      <ScaleTitleCanvas title="The book is being written in public." className="book-title-canvas wave-title-canvas" />
+      <h1 class="sr-only">The book is taking shape in public.</h1>
+      <ScaleTitleCanvas title="The book is taking shape in public." className="book-title-canvas wave-title-canvas" />
       <p>
-        Ten essays, conversations with Alicia, diagrams, notes, and fragments
-        from a real AI partnership. Follow along as it becomes.
+        Ten essays, short conversations with Alicia, diagrams, notes, and
+        artifacts from a real AI partnership. The form keeps the making visible.
+        The theory should arrive through the work.
       </p>
       <p class="book-signup-note">
-        Get new essays, conversation fragments, and book notes as At the Human
-        Scale is written.
+        Get the next essays, Alicia fragments, and book notes as the project
+        develops.
       </p>
       <form name="book-page-waitlist" method="POST" data-netlify="true" action="/thanks/" class="follow-form book-waitlist-form">
         <input type="hidden" name="form-name" value="book-page-waitlist" />
@@ -28,7 +29,7 @@ import ScaleTitleCanvas from "../components/ScaleTitleCanvas.astro";
         </label>
         <button type="submit">Follow the book</button>
       </form>
-      <a class="button ghost" href="/#essays">Read the opening essays</a>
+      <a class="button ghost" href="/#essays">Read the first essays</a>
     </section>
   </main>
 </Base>

@@ -1,6 +1,6 @@
 # At the Human Scale
 
-A bilingual book-in-progress about artificial intelligence, making, and remembering who we are.
+A bilingual book-in-progress from inside a real personal AI partnership, about keeping life at human scale.
 
 ## Development
 

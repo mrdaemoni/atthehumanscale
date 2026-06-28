@@ -38,15 +38,14 @@ const { title = "At the Human Scale", lang = "en", className = "" } = Astro.prop
         if (raw === "La escala humana") return ["La escala", "humana"];
         if (raw === "Start here") return state.width < 760 ? ["Start", "here"] : ["Start here"];
         if (raw === "Empieza aquí") return state.width < 760 ? ["Empieza", "aquí"] : ["Empieza aquí"];
-        if (raw === "Book is coming soon.") return state.width < 900 ? ["Book is", "coming", "soon."] : ["Book is", "coming soon."];
-        if (raw === "The book is being written in public.") {
-          return state.width < 860 ? ["The book is", "being written", "in public."] : ["The book is being", "written in public."];
+        if (raw === "The book is taking shape in public.") {
+          return state.width < 860 ? ["The book is", "taking shape", "in public."] : ["The book is", "taking shape", "in public."];
         }
-        if (raw === "Read or listen to the living book") {
-          return state.width < 720 ? ["Read", "or listen", "to the book"] : ["Read or listen", "to the living", "book"];
+        if (raw === "Read or listen to the essays") {
+          return state.width < 720 ? ["Read", "or listen", "to the essays"] : ["Read or listen", "to the essays"];
         }
-        if (raw === "Leer o escuchar el libro vivo") {
-          return state.width < 720 ? ["Leer", "o escuchar", "el libro vivo"] : ["Leer o escuchar", "el libro", "vivo"];
+        if (raw === "Lee o escucha los ensayos") {
+          return state.width < 720 ? ["Lee", "o escucha", "los ensayos"] : ["Lee o escucha", "los ensayos"];
         }
         return raw.split(" ");
       }
@@ -176,7 +175,7 @@ const { title = "At the Human Scale", lang = "en", className = "" } = Astro.prop
           "for (const fragment of book.weather) {",
           "  signal = fragment.with(time).without(flattening)",
           "  if (signal.touches(humanScale)) keep(signal)",
-          "  else let it pass like wind",
+          "  else leave(signal)",
           "}",
           "compile({ attention, distance, care })"
         ];

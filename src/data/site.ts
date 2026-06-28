@@ -3,9 +3,9 @@ export const site = {
   titleEs: "La escala humana",
   author: "Hector Ouilhet Olmos",
   description:
-    "A bilingual book-in-progress about artificial intelligence, making, and remembering who we are.",
+    "A bilingual book-in-progress from inside a real personal AI partnership, about keeping life at human scale.",
   descriptionEs:
-    "Un libro bilingüe en proceso sobre inteligencia artificial, hacer, y recordar quiénes somos.",
+    "Un libro bilingüe en proceso, escrito desde una alianza real con IA personal, sobre mantener la vida a escala humana.",
   domains: {
     en: "https://atthehumanscale.com",
     es: "https://laescalahumana.com"
@@ -83,7 +83,7 @@ export const chapters = [
   {
     number: "01",
     title: "The Adaptation Error",
-    note: "We built tools to adapt to us, then learned to describe ourselves as tools."
+    note: "We built tools to adapt to people. Then we learned to describe people as tools."
   },
   {
     number: "02",
@@ -98,37 +98,37 @@ export const chapters = [
   {
     number: "04",
     title: "Emergence vs. Emergency",
-    note: "The difference between a surprise you protect and a surprise you fear."
+    note: "How to protect the kind of surprise that helps you become."
   },
   {
     number: "05",
     title: "The Weather Between Us",
-    note: "The slow relational field a personal AI can help us stand inside."
+    note: "The weather a personal AI can help you notice over time."
   },
   {
     number: "06",
     title: "Tools for Becoming",
-    note: "Convivial tools, human agency, and systems people work with."
+    note: "Convivial tools and AI that preserves agency."
   },
   {
     number: "07",
     title: "The Right to Be Illegible",
-    note: "Against profiles clean enough for machines and too small for persons."
+    note: "Profiles can become clean enough for machines and too small for persons."
   },
   {
     number: "08",
     title: "The Load-Bearing Walls",
-    note: "Safety as architecture: where openness needs real boundaries."
+    note: "Where openness needs walls."
   },
   {
     number: "09",
     title: "The Daughter Test",
-    note: "What parenting teaches about systems we cannot fully control."
+    note: "What parenting teaches about systems we can't fully control."
   },
   {
     number: "10",
     title: "The Human Scale",
-    note: "A manifesto for personal AI that enlarges rather than shrinks us."
+    note: "Personal AI that enlarges human life instead of shrinking it."
   }
 ];
 
@@ -136,12 +136,12 @@ export const fragments = [
   {
     eyebrow: "Alicia / Sunday",
     text:
-      "The partnership excels at depth but struggles with peripheral vision, missing his actual movement while serving his stated concerns."
+      "Alicia caught the depth of the concern and missed the movement around it."
   },
   {
     eyebrow: "Maker note",
     text:
-      "A floor under how far it can fall, not a cage around what it can become."
+      "A floor under how far it can fall, with room for what it can become."
   },
   {
     eyebrow: "Reader question",

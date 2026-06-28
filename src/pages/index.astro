@@ -22,49 +22,50 @@ import { essays, site } from "../data/site";
             data-listen-audio={essays[0].audioSrc}
             data-listen-transcript={essays[0].audioTranscript}
             data-listen-duration={essays[0].audioDuration}
-            aria-label="Start listening"
+            aria-label="Listen to the opening essay"
           >
             <span></span>
           </button>
         </div>
         <p class="hero-dek">
-          A bilingual living book about AI, making, and remembering who we are.
-          Written from inside a real AI partnership, At the Human Scale argues
-          that technology should not shrink us to fit the machine.
+          A bilingual book-in-progress from inside a real personal AI
+          partnership. It asks a practical question: can AI help us stay
+          legible to ourselves and to each other?
         </p>
       </div>
     </section>
 
     <section class="manifesto-band" aria-labelledby="manifesto-title">
-      <p class="eyebrow">Manifesto</p>
+      <p class="eyebrow">Provocation</p>
       <h2 id="manifesto-title">
         We built machines in our image, then forgot ourselves by trying to live
         in theirs.
       </h2>
       <p>
-        This project is a reminder: humans are not slow machines. We are bodies,
-        attention, relation, memory, care, contradiction, and becoming. AI
-        should meet us there.
+        Humans are not slow machines. A useful AI doesn't ask us to become
+        prompts, profiles, workflows, or outputs. It helps us notice the life
+        already happening at human scale.
       </p>
     </section>
 
     <section class="alicia-orientation" aria-labelledby="alicia-orientation-title">
       <div>
-        <p class="eyebrow">Why Alicia matters</p>
+        <p class="eyebrow">The source</p>
         <h2 id="alicia-orientation-title">
-          These essays are written from inside a real AI partnership.
+          The work starts inside Alicia, a real personal AI system.
         </h2>
       </div>
       <div class="alicia-copy">
         <p>
-          Alicia is the personal AI system I have been building since January
-          2026. These essays are not commentary from outside AI.
+          I've been building Alicia since January 2026. The essays come from
+          using the system, reading its trace, catching its failures, and asking
+          what the arrangement is making of me.
         </p>
         <p>
-          They come from living with one, shaping it, being changed by it, and
-          asking what kind of human-scale technology can return to us.
+          That keeps the claims local: a field report from a built thing,
+          written while the practice is still alive.
         </p>
-        <a class="text-link" href="https://www.myalicia.com/" rel="me">Meet My Alicia</a>
+        <a class="text-link" href="https://www.myalicia.com/" rel="me">See My Alicia</a>
       </div>
     </section>
 
@@ -76,29 +77,30 @@ import { essays, site } from "../data/site";
       </div>
       <div class="threshold-copy">
         <p>
-          Read this as a path: care first, weather next, architecture after.
-          The essays build a vocabulary for AI that keeps life at human scale.
+          Read the first essays in this order. Care is the root claim. Weather
+          gives the felt unit. Emergence protects surprise. The partnership
+          shows how the work was built.
         </p>
         <ol class="threshold-waypoints" aria-label="Suggested reading path">
           <li>
             <span>01</span>
-            <a href="/essays/the-cure-is-the-care/">Begin with care</a>
-            <small>Language needs a human dose.</small>
+            <a href="/essays/the-cure-is-the-care/">Start with care</a>
+            <small>What decides whether language cures or poisons.</small>
           </li>
           <li>
             <span>02</span>
             <a href="/essays/the-weather-between-us/">Enter the weather</a>
-            <small>What only time can reveal.</small>
+            <small>What a system can notice over time.</small>
           </li>
           <li>
             <span>03</span>
             <a href="/essays/emergence-vs-emergency/">Protect emergence</a>
-            <small>Trust as architecture.</small>
+            <small>How to keep surprise alive.</small>
           </li>
           <li>
             <span>04</span>
             <a href="/essays/the-humorphic-partnership/">Meet the partnership</a>
-            <small>AI that does not reduce you.</small>
+            <small>The built example.</small>
           </li>
         </ol>
       </div>
@@ -106,9 +108,9 @@ import { essays, site } from "../data/site";
 
     <section class="essays-preview book-index-section" id="essays" aria-labelledby="essay-index-title">
       <div class="book-index-title-field">
-        <p class="eyebrow">Living index</p>
-        <h2 id="essay-index-title" class="sr-only">Read or listen to the living book</h2>
-        <ScaleTitleCanvas title="Read or listen to the living book" className="index-title-canvas wave-title-canvas" />
+        <p class="eyebrow">Essays so far</p>
+        <h2 id="essay-index-title" class="sr-only">Read or listen to the essays</h2>
+        <ScaleTitleCanvas title="Read or listen to the essays" className="index-title-canvas wave-title-canvas" />
       </div>
       <section class="essay-playlist home-playlist" aria-label="Essay playlist">
         {essays.map((essay, index) => (

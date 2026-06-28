@@ -19,7 +19,7 @@ const formatDuration = (value?: number) => {
   data-current-title={isEs ? first.titleEs : first.title}
   data-current-audio={first.audioSrc}
   data-current-duration={first.audioDuration}
-  aria-label={isEs ? "Reproductor del libro" : "Book audio player"}
+  aria-label={isEs ? "Reproductor de ensayos" : "Essay audio player"}
 >
   <button
     class="listen-toggle"
@@ -35,7 +35,7 @@ const formatDuration = (value?: number) => {
     <span></span>
   </button>
   <div class="listen-copy">
-    <p>{isEs ? "Leyendo ahora" : "Now reading"}</p>
+    <p>{isEs ? "Escuchando" : "Listening to"}</p>
     <strong data-player-title>{isEs ? first.titleEs : first.title}</strong>
     <div class="listen-progress" aria-hidden="true" data-player-progress><span></span></div>
   </div>

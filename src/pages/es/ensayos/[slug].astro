@@ -40,14 +40,14 @@ const related = essays.filter((item) => item.slug !== frontmatter.enSlug);
         <Content />
       </div>
     </article>
-    <aside class="essay-aside" aria-label="Contexto del ensayo">
-      <p class="kicker">Este ángulo</p>
+    <aside class="essay-aside" aria-label="Lo que hace este ensayo">
+      <p class="kicker">Lo que hace este ensayo</p>
       <p>{essay?.angleEs}</p>
       {frontmatter.paperUrl && (
         <a class="text-link" href={frontmatter.paperUrl}>{frontmatter.paperTitle}</a>
       )}
     </aside>
-    <nav class="next-essays" aria-label="Más ensayos">
+    <nav class="next-essays" aria-label="Leer después">
       {related.map((item) => (
         <a href={`/es/ensayos/${item.esSlug}/`}>
           <span>{item.number}</span>
