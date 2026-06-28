@@ -166,12 +166,12 @@ const isEs = lang === "es";
 
     function drawTopologyBands(width, height, time) {
       const shades = [
-        "rgba(255, 248, 239, 0.2)",
-        "rgba(181, 66, 86, 0.12)",
-        "rgba(244, 196, 195, 0.11)",
-        "rgba(255, 248, 239, 0.13)",
-        "rgba(122, 160, 162, 0.06)",
-        "rgba(255, 248, 239, 0.18)"
+        "rgba(255, 248, 239, 0.16)",
+        "rgba(181, 66, 86, 0.052)",
+        "rgba(244, 196, 195, 0.058)",
+        "rgba(255, 248, 239, 0.105)",
+        "rgba(122, 160, 162, 0.034)",
+        "rgba(255, 248, 239, 0.145)"
       ];
 
       ctx.save();
@@ -194,39 +194,134 @@ const isEs = lang === "es";
         }
         ctx.closePath();
         ctx.fillStyle = shade;
-        ctx.globalAlpha = 0.82;
+        ctx.globalAlpha = 0.64;
         ctx.fill();
       });
 
-      ctx.globalAlpha = 0.16;
-      ctx.strokeStyle = "rgba(65, 111, 123, 0.28)";
-      ctx.lineWidth = 1;
       for (let layer = 0; layer < shades.length - 1; layer += 1) {
-        ctx.beginPath();
-        for (let x = -90; x <= width + 90; x += 16) {
-          const y = topologyWave(layer, x, width, height, time);
-          if (x === -90) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
+        for (let echo = -1; echo <= 1; echo += 1) {
+          ctx.beginPath();
+          for (let x = -90; x <= width + 90; x += 16) {
+            const y =
+              topologyWave(layer, x, width, height, time) +
+              echo * (8 + layer * 1.5) +
+              Math.sin(x * 0.008 + time * 0.0004 + layer) * 2.4;
+            if (x === -90) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          }
+          ctx.globalAlpha = echo === 0 ? 0.22 : 0.09;
+          ctx.strokeStyle = echo === 0 ? "rgba(65, 111, 123, 0.36)" : "rgba(38, 24, 23, 0.24)";
+          ctx.lineWidth = echo === 0 ? 1 : 0.75;
+          ctx.stroke();
         }
-        ctx.stroke();
       }
       ctx.restore();
     }
 
-    function drawAsciiWaveField(width, height, time, colors, energy, activeCues) {
+    function buildWaveTextMap(cols, rows, time, activeCues, segment) {
+      const letters = new Map();
+
+      function cleanPhrase(rawPhrase, limit = 140) {
+        return rawPhrase
+          .toLowerCase()
+          .replace(/[^a-z0-9áéíóúñü' ]/g, "")
+          .replace(/\s+/g, " ")
+          .trim()
+          .slice(0, limit);
+      }
+
+      function placeLetter(row, col, letter, strength) {
+        if (col < 0 || col >= cols || row < 0 || row >= rows) return;
+        const key = `${row}:${col}`;
+        const existing = letters.get(key);
+        if (existing && existing.strength >= strength) return;
+        letters.set(key, { letter, strength });
+      }
+
+      function addPhrase(rawPhrase, x, y, strength, seed, limit = 96) {
+        const phrase = cleanPhrase(rawPhrase, limit);
+        if (!phrase || strength <= 0.01) return;
+
+        const baseRow = Math.round(y * (rows - 1));
+        const startCol = Math.round(x * (cols - 1) - phrase.length / 2);
+        for (let index = 0; index < phrase.length; index += 1) {
+          const letter = phrase[index];
+          if (letter === " ") continue;
+
+          const local = index / Math.max(1, phrase.length - 1);
+          const col = startCol + index;
+          const row =
+            baseRow +
+            Math.round(
+              Math.sin(local * Math.PI * 2.5 + canvasTime * 0.031 + seed) * (1.4 + strength * 3) +
+                Math.sin(local * Math.PI * 8 + canvasTime * 0.015 + seed) * 0.8
+            );
+
+          placeLetter(row, col, letter, strength);
+        }
+      }
+
+      function addRibbon(rawPhrase, y, strength, seed, limit = 180) {
+        const phrase = rawPhrase
+          ? `   ${cleanPhrase(rawPhrase, limit)}   `
+          : "";
+        if (!phrase || strength <= 0.01) return;
+
+        const drift = Math.floor((time * (0.34 + strength * 0.52) + seed * 9.7) % phrase.length);
+        for (let col = 0; col < cols; col += 1) {
+          const letter = phrase[(col + drift) % phrase.length];
+          if (letter === " ") continue;
+
+          const local = col / Math.max(1, cols - 1);
+          const row =
+            Math.round(y * (rows - 1)) +
+            Math.round(
+              Math.sin(local * Math.PI * (2.1 + strength * 1.4) + canvasTime * 0.028 + seed) *
+                (1.8 + strength * 4.4) +
+                Math.sin(local * Math.PI * 9.3 + canvasTime * 0.012 + seed * 0.5) * 1.1
+            );
+
+          placeLetter(row, col, letter, strength);
+          if (strength > 0.58 && (col + Math.floor(seed * 10)) % 6 === 0) {
+            placeLetter(row + 1, col, letter, strength * 0.7);
+          }
+        }
+      }
+
+      if (segment?.text) {
+        const progress = clamp((time - segment.start) / Math.max(0.1, segment.end - segment.start), 0, 1);
+        const reveal = smoothstep(0.04, 0.5, progress) * (1 - smoothstep(0.72, 1, progress));
+        const strength = 0.5 + reveal * 0.45;
+        addRibbon(segment.text, 0.54, strength, (segment.index ?? time) * 0.19, 180);
+        addPhrase(segment.text, 0.5, 0.58, 0.28 + reveal * 0.28, time * 0.04, 118);
+      }
+
+      activeCues.forEach((cue) => {
+        const envelope = cueEnvelope(cue, time);
+        if (envelope.visible <= 0.01) return;
+        const strength = envelope.visible * envelope.arrive * (1 - envelope.release * 0.78);
+        addRibbon(cue.text, cue.y, strength * 0.62, cue.start, 96);
+        addPhrase(cue.text, cue.x, cue.y, strength, cue.start, 72);
+      });
+
+      return letters;
+    }
+
+    function drawAsciiWaveField(width, height, time, colors, energy, activeCues, segment) {
       ctx.save();
       ctx.globalCompositeOperation = "multiply";
 
-      const cols = Math.min(76, Math.max(44, Math.floor(width / 22)));
-      const rows = Math.min(32, Math.max(20, Math.floor(height / 26)));
-      const fontSize = Math.min(14, Math.max(10, width / 112));
-      const charWidth = fontSize * 0.84;
-      const rowHeight = fontSize * 1.18;
-      const startX = (width - cols * charWidth) / 2;
-      const startY = height * 0.12;
+      const fontSize = Math.min(12.5, Math.max(9.5, Math.min(width / 108, height / 76)));
+      const charWidth = fontSize * 0.78;
+      const rowHeight = fontSize * 1.14;
+      const cols = Math.ceil(width / charWidth) + 4;
+      const rows = Math.ceil(height / rowHeight) + 4;
+      const startX = -charWidth * 2;
+      const startY = -rowHeight * 2;
       const centerX = 0.5;
       const centerY = 0.5;
       const activeWeight = Math.min(1, activeCues.reduce((sum, cue) => sum + cueEnvelope(cue, time).visible * 0.18, 0));
+      const waveText = buildWaveTextMap(cols, rows, time, activeCues, segment);
 
       ctx.font = `${fontSize}px ui-monospace, SFMono-Regular, Menlo, monospace`;
       ctx.textBaseline = "top";
@@ -247,56 +342,22 @@ const isEs = lang === "es";
             startY +
             row * rowHeight +
             Math.sin(xNorm * Math.PI * 2 + canvasTime * 0.035 + row * 0.2) * 7;
-          const opacity = clamp(0.18 + (1 - dist) * 0.26 + Math.sin(wave) * 0.08 + activeWeight * 0.04, 0.12, 0.54);
-          ctx.globalAlpha = opacity * energy;
-          ctx.fillStyle = (row + col) % 23 === 0 ? colors[0] : (row + col) % 31 === 0 ? colors[1] : "rgba(38, 24, 23, 0.58)";
-          ctx.fillText(asciiChars[charIndex], x, y);
+          const opacity = clamp(0.09 + (1 - dist) * 0.19 + Math.sin(wave) * 0.06 + activeWeight * 0.03, 0.06, 0.38);
+          const textCell = waveText.get(`${row}:${col}`);
+          const glyph = textCell?.letter || asciiChars[charIndex];
+          const textLift = textCell?.strength || 0;
+          ctx.globalAlpha = clamp(opacity + textLift * 0.62, 0.08, 0.9) * energy;
+          ctx.fillStyle = textCell
+            ? `rgba(38, 24, 23, ${clamp(0.48 + textLift * 0.44, 0.48, 0.9).toFixed(3)})`
+            : (row + col) % 23 === 0
+              ? colors[0]
+              : (row + col) % 31 === 0
+                ? colors[1]
+                : "rgba(38, 24, 23, 0.58)";
+          ctx.fillText(glyph, x, y);
         }
       }
 
-      ctx.restore();
-    }
-
-    function drawEssayWordsInWaves(cue, time, width, height, colors, energy) {
-      const envelope = cueEnvelope(cue, time);
-      if (envelope.visible <= 0.001) return;
-
-      const phrase = cue.text.toLowerCase();
-      const fontSize = Math.min(22, Math.max(14, width / 64)) * (0.78 + cue.size * 1.55);
-      const charWidth = fontSize * 0.62;
-      const centerX = width * cue.x + Math.sin(canvasTime * 0.004 + cue.start) * 20;
-      const baseY = height * cue.y + Math.cos(canvasTime * 0.003 + cue.start) * 18;
-      const startX = centerX - (phrase.length * charWidth) / 2;
-      const reveal = smoothstep(0.06, 0.46, envelope.progress) * (1 - envelope.release);
-
-      ctx.save();
-      ctx.globalCompositeOperation = "multiply";
-      ctx.font = `${fontSize}px ui-monospace, SFMono-Regular, Menlo, monospace`;
-      ctx.textBaseline = "middle";
-
-      for (let i = 0; i < phrase.length; i += 1) {
-        const letter = phrase[i];
-        if (letter === " ") continue;
-        const local = i / Math.max(1, phrase.length - 1);
-        const gate = smoothstep(local - 0.28, local + 0.2, reveal);
-        const x =
-          startX +
-          i * charWidth +
-          Math.sin(canvasTime * 0.025 + i * 0.54 + cue.start) * (5 + cue.size * 18);
-        const y =
-          baseY +
-          Math.sin(local * Math.PI * 2.4 + canvasTime * 0.038 + cue.start) * (16 + cue.size * 32) +
-          Math.sin(local * Math.PI * 9 + canvasTime * 0.022) * 4;
-        ctx.globalAlpha = envelope.visible * gate * (0.34 + cue.size * 0.95) * energy;
-        ctx.fillStyle = i % 7 === 0 ? colors[0] : i % 11 === 0 ? colors[1] : "rgba(38, 24, 23, 0.66)";
-        ctx.fillText(letter, x, y);
-
-        if (i % 3 === 0) {
-          const ascii = asciiChars[(i + Math.floor(canvasTime / 8)) % asciiChars.length];
-          ctx.globalAlpha = envelope.visible * gate * 0.11 * energy;
-          ctx.fillText(ascii, x + Math.sin(i) * 12, y + Math.cos(i * 0.7) * 14);
-        }
-      }
       ctx.restore();
     }
 
@@ -394,9 +455,7 @@ const isEs = lang === "es";
       ctx.fillRect(0, 0, width, height);
 
       drawTopologyBands(width, height, canvasTime);
-      drawAsciiWaveField(width, height, time, colors, energy, activeCues);
-
-      activeCues.forEach((cue) => drawEssayWordsInWaves(cue, time, width, height, colors, energy));
+      drawAsciiWaveField(width, height, time, colors, energy, activeCues, segment);
 
       canvasTime += reduceMotion.matches ? 0 : 0.8;
       raf = window.requestAnimationFrame(drawCanvas);

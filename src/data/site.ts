@@ -14,22 +14,36 @@ export const site = {
 
 export const essays = [
   {
-    slug: "the-humorphic-partnership",
+    slug: "the-cure-is-the-care",
     number: "01",
-    title: "The Humorphic Partnership",
-    titleEs: "La alianza humórfica",
-    date: "May 19, 2026",
-    dek: "How a personal AI made me more human.",
-    minutes: 14,
-    angle:
-      "A personal AI partnership, built around continuity, authorship, and surprise.",
+    title: "The Cure Is the Care",
+    titleEs: "La cura es el cuidado",
+    date: "June 27, 2026",
+    dek:
+      "A large language model is the grasping half of language, concentrated. It can complete a poisoning already underway, or help us recover the attending half. What decides is care.",
+    minutes: 10,
+    angle: "Language as pharmakon, and care as the human-scale dose.",
     angleEs:
-      "Una alianza con IA personal, construida alrededor de continuidad, autoría y sorpresa.",
-    cover: "/og/the-humorphic-partnership.png"
+      "El lenguaje como fármaco, y el cuidado como la dosis a escala humana.",
+    cover: "/og/the-cure-is-the-care.png"
+  },
+  {
+    slug: "the-weather-between-us",
+    number: "02",
+    title: "The Weather Between Us",
+    titleEs: "El clima entre nosotros",
+    date: "June 20, 2026",
+    dek:
+      "Why the honest unit between us is slower than a feeling, and why personal AI should learn to read what only time reveals.",
+    minutes: 11,
+    angle: "Weather, duration, and what only time can reveal.",
+    angleEs:
+      "Clima, duración y lo que solo el tiempo puede revelar.",
+    cover: "/essays/the-weather-between-us/the-red-stair.jpg"
   },
   {
     slug: "emergence-vs-emergency",
-    number: "02",
+    number: "03",
     title: "Emergence vs. Emergency",
     titleEs: "Emerger o entrar en emergencia",
     date: "June 8, 2026",
@@ -41,18 +55,18 @@ export const essays = [
     cover: "/og/emergence-vs-emergency.png"
   },
   {
-    slug: "the-weather-between-us",
-    number: "03",
-    title: "The Weather Between Us",
-    titleEs: "El clima entre nosotros",
-    date: "June 20, 2026",
-    dek:
-      "Why the honest unit between us is slower than a feeling, and why personal AI should learn to read what only time reveals.",
-    minutes: 11,
-    angle: "Weather, duration, and what only time can reveal.",
+    slug: "the-humorphic-partnership",
+    number: "04",
+    title: "The Humorphic Partnership",
+    titleEs: "La alianza humórfica",
+    date: "May 19, 2026",
+    dek: "How a personal AI made me more human.",
+    minutes: 14,
+    angle:
+      "A personal AI partnership, built around continuity, authorship, and surprise.",
     angleEs:
-      "Clima, duración y lo que solo el tiempo puede revelar.",
-    cover: "/essays/the-weather-between-us/the-red-stair.jpg"
+      "Una alianza con IA personal, construida alrededor de continuidad, autoría y sorpresa.",
+    cover: "/og/the-humorphic-partnership.png"
   }
 ];
 
