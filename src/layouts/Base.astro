@@ -58,7 +58,7 @@ const fullTitle = title === site.title ? title : `${title} | ${site.title}`;
   </head>
   <body class={bodyClass}>
     <AliciaField />
-    <SiteHeader lang={lang} />
+    <SiteHeader lang={lang} alternateEnPath={alternateEnPath} alternateEsPath={alternateEsPath} />
     <slot />
     <ListeningStage lang={lang} />
     <AudioPlayer lang={lang} />

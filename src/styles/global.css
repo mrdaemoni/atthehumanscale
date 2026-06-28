@@ -6,6 +6,10 @@
   --muted: #765f58;
   --line: rgba(38, 24, 23, 0.12);
   --red: #aa3157;
+  --rose-title: rgba(170, 49, 87, 0.46);
+  --rose-title-strong: rgba(170, 49, 87, 0.62);
+  --wine: #5a2442;
+  --wine-soft: rgba(90, 36, 66, 0.78);
   --blue: #416f7b;
   --green: #5f724f;
   --gold: #aa762d;
@@ -318,12 +322,13 @@ p {
 
 .entry-cta a:first-child {
   color: var(--paper-2);
-  background: rgba(118, 95, 88, 0.86);
+  background: rgba(90, 36, 66, 0.82);
 }
 
 .entry-cta button {
   width: 48px;
   border-right: 0;
+  color: var(--wine);
   cursor: pointer;
 }
 
@@ -355,17 +360,18 @@ p {
 
 .button.primary {
   color: var(--paper-2);
-  background: var(--ink);
-  border-color: var(--ink);
+  background: var(--wine);
+  border-color: var(--wine);
 }
 
 .button.ghost {
-  color: currentColor;
-  background: transparent;
+  color: var(--wine-soft);
+  background: rgba(255, 246, 238, 0.18);
+  border-color: rgba(90, 36, 66, 0.34);
 }
 
 .button.dark {
-  color: var(--ink);
+  color: var(--wine);
 }
 
 .hero-thesis {
@@ -1082,7 +1088,7 @@ blockquote p:last-child {
   min-width: 28px;
   font-family: var(--mono);
   font-size: 12px;
-  color: var(--red);
+  color: var(--rose-title-strong);
   letter-spacing: 0.1em;
 }
 
@@ -1092,16 +1098,16 @@ blockquote p:last-child {
   place-items: center;
   width: 34px;
   height: 34px;
-  border: 1px solid rgba(38, 24, 23, 0.18);
+  border: 1px solid rgba(90, 36, 66, 0.2);
   border-radius: 50%;
-  color: inherit;
-  background: rgba(255, 246, 238, 0.18);
+  color: var(--wine);
+  background: rgba(255, 246, 238, 0.22);
   cursor: pointer;
 }
 
 .playlist-play {
   color: var(--paper-2);
-  background: rgba(118, 95, 88, 0.88);
+  background: rgba(90, 36, 66, 0.82);
 }
 
 .playlist-play:disabled {
@@ -1132,7 +1138,7 @@ blockquote p:last-child {
 
 .playlist-share[data-shared="true"] {
   color: var(--paper-2);
-  background: rgba(170, 49, 87, 0.88);
+  background: rgba(90, 36, 66, 0.9);
 }
 
 .playlist-copy {
@@ -1157,13 +1163,13 @@ blockquote p:last-child {
   letter-spacing: 0.14em;
   line-height: 1.45;
   text-transform: uppercase;
-  color: rgba(38, 24, 23, 0.68);
+  color: var(--rose-title-strong);
 }
 
 .playlist-heading small {
   font-family: var(--mono);
   font-size: 10px;
-  color: rgba(170, 49, 87, 0.78);
+  color: var(--wine-soft);
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -1171,7 +1177,7 @@ blockquote p:last-child {
 .playlist-item p {
   max-width: 520px;
   margin-top: 0;
-  color: rgba(118, 95, 88, 0.78);
+  color: var(--wine-soft);
   font-size: clamp(14px, 1.15vw, 16px);
   line-height: 1.42;
 }
@@ -1470,6 +1476,7 @@ figcaption {
 
 .essay-header h1 {
   font-size: clamp(54px, 9vw, 118px);
+  color: var(--rose-title);
 }
 
 .dek {
@@ -1477,11 +1484,11 @@ figcaption {
   font-family: var(--serif);
   font-size: clamp(23px, 3vw, 36px);
   line-height: 1.18;
-  color: #393a32;
+  color: var(--wine-soft);
 }
 
 .byline {
-  color: var(--muted);
+  color: rgba(90, 36, 66, 0.62);
 }
 
 .essay-content {
@@ -1497,17 +1504,18 @@ figcaption {
 .essay-content h2 {
   margin-top: 2.2em;
   font-size: clamp(35px, 5vw, 62px);
+  color: var(--rose-title);
 }
 
 .essay-content blockquote {
   margin: 1.8em 0;
   padding: 0 0 0 24px;
   border: 0;
-  border-left: 2px solid var(--red);
+  border-left: 2px solid rgba(90, 36, 66, 0.62);
   border-radius: 0;
   background: transparent;
   box-shadow: none;
-  color: var(--red);
+  color: var(--wine-soft);
 }
 
 .essay-content blockquote p {
@@ -1524,7 +1532,7 @@ figcaption {
 }
 
 .essay-content a {
-  color: var(--red);
+  color: var(--wine);
   text-underline-offset: 4px;
 }
 
@@ -1554,7 +1562,7 @@ figcaption {
   align-self: start;
   padding: 18px 0 0 18px;
   border-left: 1px solid var(--line);
-  color: var(--muted);
+  color: var(--wine-soft);
 }
 
 .next-essays {
@@ -1577,7 +1585,11 @@ figcaption {
 
 .next-essays span {
   font-family: var(--mono);
-  color: var(--red);
+  color: var(--wine-soft);
+}
+
+.next-essays strong {
+  color: var(--rose-title-strong);
 }
 
 .listening-stage {
@@ -1925,14 +1937,14 @@ figcaption {
   place-items: center;
   width: 44px;
   height: 44px;
-  border: 1px solid rgba(38, 24, 23, 0.68);
+  border: 1px solid rgba(90, 36, 66, 0.68);
   border-radius: 50%;
   color: var(--paper-2);
-  background: rgba(38, 24, 23, 0.7);
+  background: rgba(90, 36, 66, 0.82);
   cursor: pointer;
   box-shadow:
     0 0 0 6px rgba(255, 248, 239, 0.28),
-    0 10px 24px rgba(38, 24, 23, 0.13);
+    0 10px 24px rgba(90, 36, 66, 0.16);
 }
 
 .listen-player[data-playing="true"] .listen-toggle span,
@@ -2152,10 +2164,14 @@ figcaption {
   }
 
   .home-title-canvas {
-    inset: clamp(126px, 16vh, 154px) 10px 250px;
+    inset: clamp(88px, 11vh, 112px) 10px 250px;
     width: calc(100% - 20px);
     height: calc(100% - clamp(376px, 49vh, 424px));
     opacity: 0.74;
+  }
+
+  .home-hero .hero-copy {
+    transform: translateY(clamp(58px, 8svh, 78px));
   }
 
   .book-title-canvas {

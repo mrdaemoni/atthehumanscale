@@ -1,0 +1,37 @@
+---
+import Base from "../../layouts/Base.astro";
+import ScaleTitleCanvas from "../../components/ScaleTitleCanvas.astro";
+---
+
+<Base
+  title="El libro"
+  description="La escala humana se está convirtiendo en un libro: ensayos, conversaciones con Alicia, diagramas, notas y artefactos de una alianza real con IA."
+  lang="es"
+  alternateEnPath="/book/"
+>
+  <main class="page-shell book-page book-soon-room">
+    <section class="page-hero book-pdf-hero book-soon-hero">
+      <p class="eyebrow">El libro</p>
+      <h1 class="sr-only">El libro toma forma en público.</h1>
+      <ScaleTitleCanvas title="El libro toma forma en público." lang="es" className="book-title-canvas wave-title-canvas" />
+      <p>
+        Diez ensayos, conversaciones breves con Alicia, diagramas, notas y
+        artefactos de una alianza real con IA. La forma conserva visible el
+        proceso de hacer. La teoría debe llegar a través del trabajo.
+      </p>
+      <p class="book-signup-note">
+        Recibe los próximos ensayos, fragmentos de Alicia y notas del libro
+        mientras el proyecto toma forma.
+      </p>
+      <form name="libro-lista-pagina" method="POST" data-netlify="true" action="/thanks/" class="follow-form book-waitlist-form">
+        <input type="hidden" name="form-name" value="libro-lista-pagina" />
+        <label>
+          <span>Email</span>
+          <input type="email" name="email" autocomplete="email" required placeholder="tu@email.com" />
+        </label>
+        <button type="submit">Seguir el libro</button>
+      </form>
+      <a class="button ghost" href="/es/#ensayos">Leer los primeros ensayos</a>
+    </section>
+  </main>
+</Base>

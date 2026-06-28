@@ -54,6 +54,14 @@
       ctx.setTransform(state.dpr, 0, 0, state.dpr, 0, 0);
     }
 
+    function fieldOrigin() {
+      const topOffset = state.width < 860 ? 78 : 72;
+      return {
+        x: Math.min(state.width * 0.26, Math.max(72, state.width * 0.09)),
+        y: Math.min(state.height * 0.18, topOffset)
+      };
+    }
+
     function traceY(seed, amp, offset, x) {
       const { width, height, pointerX, pointerY, scroll, time } = state;
       const baseY = height * offset + Math.sin(time * 0.00028 + seed) * 24;
@@ -184,8 +192,9 @@
 
     function drawVortex() {
       const { width, height, pointerX, pointerY, time, progress } = state;
-      const cx = width * (0.18 + pointerX * 0.08);
-      const cy = height * (0.24 + pointerY * 0.08);
+      const origin = fieldOrigin();
+      const cx = origin.x + (pointerX - 0.5) * Math.min(width, 120) * 0.18;
+      const cy = origin.y + (pointerY - 0.5) * Math.min(height, 120) * 0.16;
       ctx.save();
       ctx.globalAlpha = 0.22;
       ctx.strokeStyle = "rgba(36, 79, 115, 0.32)";

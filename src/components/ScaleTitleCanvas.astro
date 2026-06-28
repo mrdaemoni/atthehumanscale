@@ -41,6 +41,9 @@ const { title = "At the Human Scale", lang = "en", className = "" } = Astro.prop
         if (raw === "The book is taking shape in public.") {
           return state.width < 860 ? ["The book is", "taking shape", "in public."] : ["The book is", "taking shape", "in public."];
         }
+        if (raw === "El libro toma forma en público.") {
+          return state.width < 860 ? ["El libro", "toma forma", "en público."] : ["El libro", "toma forma", "en público."];
+        }
         if (raw === "Read or listen to the essays") {
           return state.width < 720 ? ["Read", "or listen", "to the essays"] : ["Read or listen", "to the essays"];
         }
@@ -234,17 +237,23 @@ const { title = "At the Human Scale", lang = "en", className = "" } = Astro.prop
           const x = state.width * 0.03 + (index % 2) * state.width * 0.075;
           const y = startY + index * leading;
           ctx.lineWidth = isWaveTitle ? 1 : 0.9;
-          ctx.strokeStyle = `rgba(32, 35, 31, ${isIndexTitle ? 0.27 : isThresholdTitle ? 0.34 : isWaveTitle ? 0.2 : 0.16})`;
+          ctx.strokeStyle = isEssayTitle
+            ? "rgba(170, 49, 87, 0.3)"
+            : `rgba(32, 35, 31, ${isIndexTitle ? 0.27 : isThresholdTitle ? 0.34 : isWaveTitle ? 0.2 : 0.16})`;
           ctx.strokeText(line, x, y);
-          ctx.fillStyle = `rgba(32, 35, 31, ${isIndexTitle ? 0.028 : isThresholdTitle ? 0.04 : isWaveTitle ? 0.018 : 0.012})`;
+          ctx.fillStyle = isEssayTitle
+            ? "rgba(170, 49, 87, 0.038)"
+            : `rgba(32, 35, 31, ${isIndexTitle ? 0.028 : isThresholdTitle ? 0.04 : isWaveTitle ? 0.018 : 0.012})`;
           ctx.fillText(line, x, y);
-          ctx.strokeStyle = `rgba(36, 79, 115, ${isWaveTitle ? 0.05 : 0.038})`;
+          ctx.strokeStyle = isEssayTitle
+            ? "rgba(90, 36, 66, 0.07)"
+            : `rgba(36, 79, 115, ${isWaveTitle ? 0.05 : 0.038})`;
           ctx.strokeText(line, x - 1, y + 1);
         });
 
         ctx.globalAlpha = isWaveTitle ? 0.44 : 0.34;
         ctx.lineWidth = 0.7;
-        ctx.strokeStyle = "rgba(32, 35, 31, 0.2)";
+        ctx.strokeStyle = isEssayTitle ? "rgba(170, 49, 87, 0.2)" : "rgba(32, 35, 31, 0.2)";
         const stride = isWaveTitle ? 5 : 7;
         for (let i = 0; i < state.points.length - 2; i += stride) {
           const point = state.points[i];
@@ -353,18 +362,22 @@ const { title = "At the Human Scale", lang = "en", className = "" } = Astro.prop
             (isWaveTitle ? 0.024 : 0.02) +
             collision * (isWaveTitle ? 0.38 : 0.32) +
             gustWindow * 0.05;
-          ctx.fillStyle = `rgba(32, 35, 31, ${alpha})`;
+          ctx.fillStyle = isEssayTitle ? `rgba(90, 36, 66, ${alpha})` : `rgba(32, 35, 31, ${alpha})`;
           ctx.beginPath();
           ctx.arc(x, y, (point.depth > 1.7 ? 1.28 : 0.95) + collision * 0.9, 0, Math.PI * 2);
           ctx.fill();
           if (collision > 0.24) {
-            ctx.fillStyle = `rgba(32, 35, 31, ${0.035 + collision * (isWaveTitle ? 0.24 : 0.18)})`;
+            ctx.fillStyle = isEssayTitle
+              ? `rgba(170, 49, 87, ${0.04 + collision * 0.24})`
+              : `rgba(32, 35, 31, ${0.035 + collision * (isWaveTitle ? 0.24 : 0.18)})`;
             ctx.beginPath();
             ctx.arc(point.ox, point.oy, 0.8 + collision * 1.2, 0, Math.PI * 2);
             ctx.fill();
           }
           if (index % 17 === 0 && collision > 0.32) {
-            ctx.strokeStyle = `rgba(141, 48, 38, ${0.02 + collision * 0.08})`;
+            ctx.strokeStyle = isEssayTitle
+              ? `rgba(90, 36, 66, ${0.025 + collision * 0.08})`
+              : `rgba(141, 48, 38, ${0.02 + collision * 0.08})`;
             ctx.beginPath();
             ctx.moveTo(x, y);
             ctx.lineTo(point.ox + Math.sin(point.seed) * 8, point.oy + Math.cos(point.seed) * 6);

@@ -1,7 +1,7 @@
 ---
 import { essays, site } from "../data/site";
 
-const { lang = "en" } = Astro.props;
+const { lang = "en", alternateEnPath, alternateEsPath } = Astro.props;
 const isEs = lang === "es";
 const path = Astro.url.pathname;
 const enEssaySlug = path.match(/^\/essays\/([^/]+)\/?$/)?.[1];
@@ -27,17 +27,30 @@ const labels = isEs
       home: site.title
     };
 
+const normalizePath = (value) => {
+  if (!value) return "/";
+  return value.startsWith("/") ? value : `/${value}`;
+};
+const spanishLocalPath = (value) => {
+  const normalized = normalizePath(value);
+  return normalized === "/" ? "/es/" : `/es${normalized}`;
+};
+const bookHref = isEs ? "/es/libro/" : "/book/";
 const langHref = isEs
-  ? esEssay
-    ? `/essays/${esEssay.slug}/`
-    : path.startsWith("/es/ensayos")
-      ? "/#essays"
-      : path.replace(/^\/es\/?/, "/") || "/"
-  : enEssay
-    ? `/es/ensayos/${enEssay.esSlug}/`
-    : path.startsWith("/essays")
-      ? "/es/#ensayos"
-      : "/es/";
+  ? alternateEnPath
+    ? normalizePath(alternateEnPath)
+    : esEssay
+      ? `/essays/${esEssay.slug}/`
+      : path.startsWith("/es/ensayos")
+        ? "/#essays"
+        : path.replace(/^\/es\/?/, "/") || "/"
+  : alternateEsPath
+    ? spanishLocalPath(alternateEsPath)
+    : enEssay
+      ? `/es/ensayos/${enEssay.esSlug}/`
+      : path.startsWith("/essays")
+        ? "/es/#ensayos"
+        : "/es/";
 ---
 
 <header class="site-header" data-lang={lang}>
@@ -47,8 +60,8 @@ const langHref = isEs
   </a>
   <nav class="site-nav" aria-label="Primary">
     <a href={isEs ? "/es/#ensayos" : "/#essays"}>{labels.essays}</a>
-    <a href="/book/">{labels.book}</a>
-    <a href="/about/">{labels.about}</a>
+    <a href={bookHref}>{labels.book}</a>
+    <a href="https://www.myalicia.com/" rel="me">{labels.about}</a>
     <button type="button" class="nav-button" data-follow-open>{labels.follow}</button>
     <a class="language-link" href={langHref} hreflang={isEs ? "en" : "es"}>{labels.lang}</a>
   </nav>
